@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNS投稿管理システム</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #4267B2;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .day-cell {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 100px;
+        }
+        .day-cell.today {
+            background-color: #e3f2fd;
+            border-color: #2196F3;
+        }
+        .category {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .content-preview {
+            font-size: 14px;
+            color: #333;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>高校受験塾 SNS投稿管理システム</h1>
+        <p>Twitter・Instagram 365日自動投稿</p>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="loadSheetData()">投稿データ更新</button>
+        <button class="btn" onclick="showPostSuggestion()">今日の投稿提案</button>
+    </div>
+
+    <h2>今月の投稿カレンダー</h2>
+    <div id="calendar" class="calendar-grid"></div>
+
+    <div id="suggestion" style="display:none; background:white; padding:20px; border-radius:10px; margin-top:20px;">
+        <h3>今日の投稿提案</h3>
+        <div id="suggestionContent"></div>
+    </div>
+
+    <script>
+        const categories = {
+            0: "塾の特徴・少人数制のメリット",
+            1: "勉強法・学習テクニック",
+            2: "合格体験談・生徒の声",
+            3: "今週の重要ポイント解説",
+            4: "入試情報・傾向分析",
+            5: "モチベーション・応援メッセージ",
+            6: "保護者向け情報"
+        };
+
+        const postTemplates = {
+            "勉強法・学習テクニック": [
+                "【効率的な暗記法】\n繰り返し学習が記憶定着の鍵！\n当塾では少人数制だからこそ、一人ひとりの暗記状況を把握。\n最適なタイミングで復習を促します。\n\n#高校受験 #少人数制学習塾",
+                "【集中力を高める方法】\n25分勉強→5分休憩のポモドーロ・テクニック。\n少人数制なら、生徒の集中力に合わせた授業設計が可能です。\n\n#受験勉強 #学習法"
+            ],
+            "合格体験談・生徒の声": [
+                "【合格体験記】\n「少人数制だから質問しやすかった」\n昨年度合格したA君の言葉です。\n分からないことをすぐに聞ける環境が、合格への近道でした。\n\n#合格実績 #高校受験塾",
+                "【生徒の成長】\n入塾時偏差値45→受験時60へ！\n少人数制だからこそできる、きめ細かな指導の成果です。\n\n#成績アップ #個別指導"
+            ],
+            "入試情報・傾向分析": [
+                "【2025年度入試傾向】\n数学：思考力を問う問題が増加\n英語：長文読解の配点UP\n\n少人数制で一人ひとりの弱点を分析し、効率的な対策を行います。\n\n#高校入試 #受験情報",
+                "【志望校別対策】\n各高校の出題傾向は異なります。\n当塾では生徒の志望校に合わせたカスタマイズ指導を実施。\n\n#志望校対策 #個別指導"
+            ]
+        };
+
+        function generateCalendar() {
+            const calendar = document.getElementById('calendar');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            calendar.innerHTML = '';
+            
+            // 曜日ヘッダー
+            const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+            weekDays.forEach(day => {
+                const header = document.createElement('div');
+                header.style.fontWeight = 'bold';
+                header.style.textAlign = 'center';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+            
+            // 空白セル
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                calendar.appendChild(document.createElement('div'));
+            }
+            
+            // 日付セル
+            for (let date = 1; date <= lastDay.getDate(); date++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                
+                const currentDate = new Date(year, month, date);
+                const dayOfWeek = currentDate.getDay();
+                
+                if (date === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                
+                const category = categories[dayOfWeek];
+                dayCell.innerHTML = `
+                    <strong>${date}日</strong>
+                    <div class="category">${category}</div>
+                `;
+                
+                calendar.appendChild(dayCell);
+            }
+        }
+
+        function showPostSuggestion() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const category = categories[dayOfWeek];
+            const templates = postTemplates[category] || ["カスタム投稿を作成してください"];
+            const template = templates[Math.floor(Math.random() * templates.length)];
+            
+            const suggestionDiv = document.getElementById('suggestion');
+            const contentDiv = document.getElementById('suggestionContent');
+            
+            contentDiv.innerHTML = `
+                <h4>カテゴリー: ${category}</h4>
+                <p><strong>投稿文案:</strong></p>
+                <pre style="background:#f0f0f0; padding:15px; border-radius:5px;">${template}</pre>
+                <p><strong>必要な画像:</strong></p>
+                <ul>
+                    <li>メイン画像: ${getImageSuggestion(category)}</li>
+                    <li>サブ画像: 塾のロゴまたは教室風景</li>
+                </ul>
+                <p><strong>推奨投稿時間:</strong> 17:00-19:00（生徒・保護者のアクティブ時間）</p>
+            `;
+            
+            suggestionDiv.style.display = 'block';
+        }
+
+        function getImageSuggestion(category) {
+            const imageSuggestions = {
+                "勉強法・学習テクニック": "ノートと筆記用具の写真、または勉強中の手元",
+                "合格体験談・生徒の声": "桜の写真、合格通知のイメージ（個人情報なし）",
+                "今週の重要ポイント解説": "ホワイトボードに書かれた解説、または図解",
+                "入試情報・傾向分析": "グラフや統計データの視覚化",
+                "モチベーション・応援メッセージ": "応援メッセージカード、励ましのイラスト",
+                "保護者向け情報": "保護者会の様子、面談室の写真",
+                "塾の特徴・少人数制のメリット": "少人数クラスの授業風景（後ろ姿）"
+            };
+            return imageSuggestions[category] || "塾の一般的な風景写真";
+        }
+
+        function loadSheetData() {
+            alert('Google Sheetsとの連携設定が必要です。README.mdを参照してください。');
+        }
+
+        // ページ読み込み時にカレンダー生成
+        window.onload = generateCalendar;
+    </script>
+</body>
+</html>
