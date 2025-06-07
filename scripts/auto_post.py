@@ -78,8 +78,12 @@ def post_to_twitter(text):
             print(f"Twitter認証エラー: {e}")
             return False
         
-        # 重複回避のためのタイムスタンプ追加（オプション）
+        # 重複回避のためのタイムスタンプ追加（必要に応じてコメントアウト解除）
         # text = f"{text}\n\n{datetime.now().strftime('%H:%M')}"
+        
+        # 画像URLが含まれている場合の処理
+        if 'http' in text and ('.jpg' in text or '.png' in text or '.jpeg' in text):
+            print("画像URLを含む投稿を検出")
         
         # ツイート投稿
         tweet = api.update_status(text)
