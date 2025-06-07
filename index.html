@@ -79,6 +79,11 @@
     </div>
 
     <script>
+        // Google Sheets API設定（設定方法はgoogle-sheets-setup.mdを参照）
+        const SHEET_ID = '1YKHCDU7NswNo5p3UHy6Q5jdTtChoCAXo4B_KTmGjlsI'; // Google SheetsのIDをここに入力
+        const API_KEY = 'AIzaSyD-S-4B3hTceHcOdASZjuT-Ch9EIiDneEw'; // Google Cloud ConsoleのAPIキーをここに入力
+        const RANGE = 'シート1!A2:F366'; // 365日分のデータ範囲
+        
         const categories = {
             0: "塾の特徴・少人数制のメリット",
             1: "勉強法・学習テクニック",
@@ -189,8 +194,50 @@
             return imageSuggestions[category] || "塾の一般的な風景写真";
         }
 
-        function loadSheetData() {
-            alert('Google Sheetsとの連携設定が必要です。README.mdを参照してください。');
+        async function loadSheetData() {
+            if (!SHEET_ID || !API_KEY) {
+                alert('Google SheetsのIDとAPIキーを設定してください。\ngoogle-sheets-setup.mdを参照してください。');
+                return;
+            }
+            
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`エラー: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const posts = data.values || [];
+                
+                // カレンダーを更新
+                updateCalendarWithData(posts);
+                
+                alert(`${posts.length}件のデータを読み込みました！`);
+                
+            } catch (error) {
+                console.error('エラー:', error);
+                alert('データ取得に失敗しました。\n' + error.message);
+            }
+        }
+        
+        function updateCalendarWithData(posts) {
+            // 投稿データをカレンダーに反映
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            
+            posts.forEach(post => {
+                const [date, category, twitter, instagram, image, posted] = post;
+                const postDate = new Date(date);
+                
+                if (postDate.getFullYear() === year && postDate.getMonth() + 1 === month) {
+                    // 今月のデータの場合、カレンダーに表示
+                    console.log(`${date}: ${category} - ${posted === 'TRUE' ? '投稿済み' : '未投稿'}`);
+                }
+            });
         }
 
         // ページ読み込み時にカレンダー生成
