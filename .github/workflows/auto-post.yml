@@ -30,4 +30,4 @@ jobs:
         TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
         GOOGLE_SHEETS_ID: '1YKHCDU7NswNo5p3UHy6Q5jdTtChoCAXo4B_KTmGjlsI'
         GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      run: python scripts/auto_post.py
+      run: python scripts/auto_post_v2.py
