@@ -1101,28 +1101,47 @@
         }
         
         async function deletePost() {
+            console.log('削除ボタンがクリックされました');
+            
+            if (!currentEditingDate) {
+                console.error('currentEditingDateが設定されていません');
+                alert('エラー: 日付が選択されていません');
+                return;
+            }
+            
             if (confirm('この投稿を削除しますか？')) {
-                const dateStr = formatDate(currentEditingDate);
-                
-                // 削除用のデータ（空のデータ）を送信
-                const deleteData = {
-                    date: dateStr,
-                    category: '',
-                    twitter: '',
-                    instagram: '',
-                    imageUrl: '',
-                    status: 'deleted',
-                    lastModified: new Date().toISOString()
-                };
-                
-                delete postsData[dateStr];
-                localStorage.setItem('postsData', JSON.stringify(postsData));
-                
-                // Sheetsからも削除
-                await saveToSheets(deleteData);
-                
-                closeModal();
-                generateCalendar();
+                try {
+                    const dateStr = formatDate(currentEditingDate);
+                    console.log('削除対象日付:', dateStr);
+                    
+                    // 削除用のデータ（空のデータ）を送信
+                    const deleteData = {
+                        date: dateStr,
+                        category: '',
+                        twitter: '',
+                        instagram: '',
+                        imageUrl: '',
+                        status: 'deleted',
+                        lastModified: new Date().toISOString()
+                    };
+                    
+                    delete postsData[dateStr];
+                    localStorage.setItem('postsData', JSON.stringify(postsData));
+                    console.log('ローカルデータから削除完了');
+                    
+                    // Sheetsからも削除
+                    await saveToSheets(deleteData);
+                    
+                    closeModal();
+                    generateCalendar();
+                    updateTodayStatus();
+                    checkSystemStatus();
+                    
+                    showAutoSaveIndicator('saved', '投稿を削除しました');
+                } catch (error) {
+                    console.error('削除中にエラーが発生しました:', error);
+                    showAutoSaveIndicator('error', '削除に失敗しました');
+                }
             }
         }
         
