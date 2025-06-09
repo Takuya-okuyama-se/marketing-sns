@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNS投稿 完全攻略ガイド - 塾の魅力を伝える5つのコツ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* キャラクター画像 */
+        .mascot {
+            position: absolute;
+            width: 120px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* スライド1: タイトル */
+        .slide-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            animation: slide1 25s infinite;
+        }
+
+        .slide-1 .mascot {
+            top: 50px;
+            right: 50px;
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 32px;
+            text-align: center;
+            opacity: 0.95;
+            margin-bottom: 50px;
+        }
+
+        .sns-icons {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .sns-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* スライド2: 基本ルール */
+        .slide-2 {
+            background: #f8f9fa;
+            animation: slide2 25s infinite;
+        }
+
+        .slide-2 .mascot {
+            bottom: 50px;
+            right: 50px;
+            width: 100px;
+        }
+
+        .section-title {
+            font-size: 56px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .rules-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .rule-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .rule-card.twitter {
+            border-color: #1DA1F2;
+        }
+
+        .rule-card.instagram {
+            border-color: #E4405F;
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .platform-icon {
+            font-size: 36px;
+        }
+
+        .platform-name {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .rule-points {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .rule-points li {
+            font-size: 20px;
+            color: #555;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .rule-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        /* スライド3: 投稿時間帯 */
+        .slide-3 {
+            background: #ecf0f1;
+            animation: slide3 25s infinite;
+        }
+
+        .slide-3 .mascot {
+            top: 60px;
+            left: 60px;
+            width: 100px;
+        }
+
+        .time-chart {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .time-slot {
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .time-slot.best {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .time-slot.good {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .time-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .time-label {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        .time-note {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 22px;
+            color: #856404;
+        }
+
+        /* スライド4: コンテンツアイデア */
+        .slide-4 {
+            background: white;
+            animation: slide4 25s infinite;
+        }
+
+        .slide-4 .mascot {
+            bottom: 60px;
+            left: 60px;
+            width: 100px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 950px;
+            margin-top: 40px;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .content-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .content-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .content-desc {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .content-example {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* スライド5: エンゲージメント */
+        .slide-5 {
+            background: #2c3e50;
+            color: white;
+            animation: slide5 25s infinite;
+        }
+
+        .slide-5 .mascot {
+            top: 60px;
+            right: 60px;
+            width: 120px;
+        }
+
+        .engagement-tips {
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 35px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .tip-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #667eea;
+            margin-right: 30px;
+            min-width: 60px;
+        }
+
+        .tip-content {
+            flex: 1;
+        }
+
+        .tip-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .tip-detail {
+            font-size: 20px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* スライド6: まとめ */
+        .slide-6 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            animation: slide6 25s infinite;
+        }
+
+        .slide-6 .mascot {
+            bottom: 50px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 150px;
+        }
+
+        .summary-box {
+            background: rgba(255,255,255,0.15);
+            border-radius: 30px;
+            padding: 60px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .summary-title {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .checklist {
+            text-align: left;
+            font-size: 26px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .checklist li {
+            list-style: none;
+            padding-left: 40px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .checklist li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            font-size: 28px;
+        }
+
+        .cta {
+            font-size: 32px;
+            font-weight: 600;
+            padding: 20px 40px;
+            background: white;
+            color: #f5576c;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        /* アニメーションタイミング */
+        @keyframes slide1 {
+            0%, 16.66% { opacity: 1; }
+            17%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide2 {
+            0%, 16% { opacity: 0; }
+            16.66%, 33.32% { opacity: 1; }
+            33.33%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide3 {
+            0%, 33% { opacity: 0; }
+            33.32%, 49.98% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide4 {
+            0%, 49.98% { opacity: 0; }
+            50%, 66.64% { opacity: 1; }
+            66.66%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide5 {
+            0%, 66.64% { opacity: 0; }
+            66.66%, 83.32% { opacity: 1; }
+            83.33%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide6 {
+            0%, 83.32% { opacity: 0; }
+            83.33%, 100% { opacity: 1; }
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            animation: progress 25s linear infinite;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* レコーディングインジケーター */
+        .recording-indicator {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        .rec-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff0000;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- レコーディングインジケーター -->
+        <div class="recording-indicator">
+            <div class="rec-dot"></div>
+            <span>REC</span>
+        </div>
+
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1">
+            <img src="images/teacher-fox.png" class="mascot" alt="先生キャラクター">
+            <h1 class="main-title">
+                SNS投稿<br>
+                完全攻略ガイド
+            </h1>
+            <p class="subtitle">塾の魅力を伝える5つのコツ</p>
+            <div class="sns-icons">
+                <div class="sns-icon">𝕏</div>
+                <div class="sns-icon">📷</div>
+            </div>
+        </div>
+
+        <!-- スライド2: 基本ルール -->
+        <div class="slide slide-2">
+            <img src="images/student-bear.png" class="mascot" alt="生徒キャラクター">
+            <h2 class="section-title">まず押さえたい基本ルール</h2>
+            <div class="rules-container">
+                <div class="rule-card twitter">
+                    <div class="platform-header">
+                        <span class="platform-icon">𝕏</span>
+                        <span class="platform-name">X (Twitter)</span>
+                    </div>
+                    <ul class="rule-points">
+                        <li>文字数は280文字以内</li>
+                        <li>ハッシュタグは2-3個</li>
+                        <li>画像は最大4枚</li>
+                        <li>動画は2分20秒まで</li>
+                    </ul>
+                </div>
+                <div class="rule-card instagram">
+                    <div class="platform-header">
+                        <span class="platform-icon">📷</span>
+                        <span class="platform-name">Instagram</span>
+                    </div>
+                    <ul class="rule-points">
+                        <li>正方形画像が基本</li>
+                        <li>ハッシュタグは最大30個</li>
+                        <li>ストーリーズは24時間</li>
+                        <li>リール動画は90秒まで</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド3: 投稿時間帯 -->
+        <div class="slide slide-3">
+            <img src="images/clock-owl.png" class="mascot" alt="時計キャラクター">
+            <h2 class="section-title">ゴールデンタイムを狙え！</h2>
+            <div class="time-chart">
+                <div class="time-grid">
+                    <div class="time-slot">
+                        <div class="time-value">7-9時</div>
+                        <div class="time-label">通勤通学</div>
+                    </div>
+                    <div class="time-slot good">
+                        <div class="time-value">12-13時</div>
+                        <div class="time-label">昼休み</div>
+                    </div>
+                    <div class="time-slot best">
+                        <div class="time-value">17-19時</div>
+                        <div class="time-label">帰宅時間</div>
+                    </div>
+                    <div class="time-slot good">
+                        <div class="time-value">21-22時</div>
+                        <div class="time-label">就寝前</div>
+                    </div>
+                </div>
+                <div class="time-note">
+                    💡 ターゲット層の生活リズムに合わせた投稿が効果的！
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド4: コンテンツアイデア -->
+        <div class="slide slide-4">
+            <img src="images/idea-rabbit.png" class="mascot" alt="アイデアキャラクター">
+            <h2 class="section-title">反応が取れるコンテンツ6選</h2>
+            <div class="content-grid">
+                <div class="content-card">
+                    <div class="content-icon">📚</div>
+                    <div class="content-title">勉強法Tips</div>
+                    <div class="content-desc">具体的な学習テクニック</div>
+                    <div class="content-example">例：暗記カードの作り方</div>
+                </div>
+                <div class="content-card">
+                    <div class="content-icon">🎉</div>
+                    <div class="content-title">合格速報</div>
+                    <div class="content-desc">リアルタイムの喜び</div>
+                    <div class="content-example">例：○○高校合格！</div>
+                </div>
+                <div class="content-card">
+                    <div class="content-icon">😊</div>
+                    <div class="content-title">生徒の様子</div>
+                    <div class="content-desc">日常の一コマ</div>
+                    <div class="content-example">例：真剣な授業風景</div>
+                </div>
+                <div class="content-card">
+                    <div class="content-icon">📊</div>
+                    <div class="content-title">データ解説</div>
+                    <div class="content-desc">入試傾向など</div>
+                    <div class="content-example">例：今年の出題傾向</div>
+                </div>
+                <div class="content-card">
+                    <div class="content-icon">💬</div>
+                    <div class="content-title">Q&A</div>
+                    <div class="content-desc">よくある質問</div>
+                    <div class="content-example">例：夏期講習について</div>
+                </div>
+                <div class="content-card">
+                    <div class="content-icon">🌟</div>
+                    <div class="content-title">講師紹介</div>
+                    <div class="content-desc">人柄が見える投稿</div>
+                    <div class="content-example">例：○○先生の授業</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: エンゲージメントテクニック -->
+        <div class="slide slide-5">
+            <img src="images/heart-penguin.png" class="mascot" alt="ペンギンキャラクター">
+            <h2 class="section-title" style="color: white;">エンゲージメントを高める秘訣</h2>
+            <div class="engagement-tips">
+                <div class="tip-item">
+                    <div class="tip-number">1</div>
+                    <div class="tip-content">
+                        <div class="tip-title">質問で終わる</div>
+                        <div class="tip-detail">「みなさんはどう思いますか？」でコメントを促進</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">2</div>
+                    <div class="tip-content">
+                        <div class="tip-title">ストーリー性を持たせる</div>
+                        <div class="tip-detail">Before/Afterや成長過程を見せる</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">3</div>
+                    <div class="tip-content">
+                        <div class="tip-title">感情に訴える</div>
+                        <div class="tip-detail">喜び、感動、共感を呼ぶ内容を</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-number">4</div>
+                    <div class="tip-content">
+                        <div class="tip-title">価値ある情報を提供</div>
+                        <div class="tip-detail">保存したくなる有益なコンテンツ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド6: まとめ -->
+        <div class="slide slide-6">
+            <img src="images/success-cat.png" class="mascot" alt="成功キャラクター">
+            <div class="summary-box">
+                <h2 class="summary-title">今日から実践！</h2>
+                <ul class="checklist">
+                    <li>ターゲットの生活リズムを意識する</li>
+                    <li>価値ある情報を継続的に発信</li>
+                    <li>感情に訴える写真・動画を活用</li>
+                    <li>コメントしやすい投稿を心がける</li>
+                    <li>データを分析して改善を続ける</li>
+                </ul>
+                <div class="cta">さっそく投稿してみよう！</div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress"></div>
+    </div>
+
+    <script>
+        // 動画録画用の設定
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        // スライドの自動切り替え（録画用）
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        // 初期表示
+        showSlide(0);
+
+        // 手動でスライドを切り替える（テスト用）
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            } else if (e.key === 'ArrowLeft') {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+        });
+
+        // 自動再生のトグル
+        let autoPlay = false;
+        let autoPlayInterval = null;
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ') {
+                autoPlay = !autoPlay;
+                if (autoPlay) {
+                    console.log('自動再生開始');
+                    startAutoPlay();
+                } else {
+                    console.log('自動再生停止');
+                    stopAutoPlay();
+                }
+            }
+        });
+        
+        // 自動再生機能
+        function startAutoPlay() {
+            currentSlide = 0;
+            showSlide(currentSlide);
+            
+            // 各スライドの表示時間（ミリ秒）
+            const slideDurations = [4166, 4166, 4166, 4166, 4166, 4170]; // 合計25秒
+            let totalTime = 0;
+            
+            slideDurations.forEach((duration, index) => {
+                setTimeout(() => {
+                    if (index < slides.length - 1) {
+                        currentSlide = index + 1;
+                        showSlide(currentSlide);
+                    }
+                }, totalTime);
+                totalTime += duration;
+            });
+        }
+        
+        function stopAutoPlay() {
+            // 必要に応じて実装
+        }
+        
+        // 親ウィンドウからのメッセージを受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'nextSlide') {
+                currentSlide = event.data.slide;
+                showSlide(currentSlide);
+            } else if (event.data.action === 'prevSlide') {
+                currentSlide = event.data.slide;
+                showSlide(currentSlide);
+            } else if (event.data.action === 'reset') {
+                currentSlide = 0;
+                showSlide(currentSlide);
+                stopAutoPlay();
+            }
+        });
+    </script>
+</body>
+</html>
