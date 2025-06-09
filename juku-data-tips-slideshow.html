@@ -48,13 +48,29 @@
             opacity: 1;
         }
 
-        /* 講師アイコン（絵文字で代替） */
+        /* 講師アイコン */
         .teacher-icon {
-            font-size: 80px;
+            width: 150px;
+            height: auto;
             position: absolute;
             top: 60px;
             right: 60px;
             animation: bounce 2s ease-in-out infinite;
+        }
+        
+        /* キャラクター画像共通 */
+        .character-img {
+            width: 120px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .character-small {
+            width: 100px;
+        }
+        
+        .character-large {
+            width: 180px;
         }
 
         @keyframes bounce {
@@ -481,31 +497,39 @@
         }
 
         /* 装飾的な要素 */
-        .decoration {
+        /* 背景装飾用の追加キャラクター */
+        .bg-character {
             position: absolute;
-            font-size: 100px;
-            opacity: 0.1;
+            opacity: 0.15;
             animation: float 20s ease-in-out infinite;
+        }
+        
+        .bg-char-1 { 
+            width: 80px;
+            top: 10%; 
+            left: 10%; 
+            animation-delay: 0s; 
+        }
+        .bg-char-2 { 
+            width: 100px;
+            bottom: 10%; 
+            right: 10%; 
+            animation-delay: 5s; 
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(5deg); }
-            50% { transform: translateY(0) rotate(-5deg); }
-            75% { transform: translateY(-20px) rotate(5deg); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        .deco-1 { top: 10%; left: 10%; animation-delay: 0s; }
-        .deco-2 { bottom: 10%; right: 10%; animation-delay: 5s; }
-        .deco-3 { top: 50%; left: 5%; animation-delay: 10s; }
     </style>
 </head>
 <body>
     <div class="video-container">
         <!-- スライド1: タイトル -->
         <div class="slide slide-1 active">
-            <span class="teacher-icon">👨‍🏫</span>
-            <span class="decoration deco-1">📊</span>
+            <img src="images/4.png" class="teacher-icon" alt="先生キャラクター">
+            <img src="images/1.png" class="bg-character bg-char-1" alt="背景キャラ">
             <h1 class="main-title">
                 塾講師の視点
             </h1>
@@ -520,11 +544,11 @@
 
         <!-- スライド2: データ比較 -->
         <div class="slide slide-2">
-            <span class="decoration deco-2">📈</span>
+            <img src="images/2.png" class="character-img" style="position: absolute; bottom: 50px; left: 50px;" alt="生徒キャラクター">
             <h2 class="comparison-header">こんなに違う！テストの現実</h2>
             <div class="data-comparison">
                 <div class="data-card school">
-                    <div class="data-emoji">🏫</div>
+                    <img src="images/3.png" class="character-small" alt="喜ぶ生徒" style="margin-bottom: 20px;">
                     <div class="test-type">小学校の<br>カラーテスト</div>
                     <div class="score-large">90</div>
                     <div class="data-details">
@@ -534,7 +558,7 @@
                     </div>
                 </div>
                 <div class="data-card juku">
-                    <div class="data-emoji">📝</div>
+                    <img src="images/2.png" class="character-small" alt="考える生徒" style="margin-bottom: 20px;">
                     <div class="test-type">塾の<br>模擬試験</div>
                     <div class="score-large">50</div>
                     <div class="data-details">
@@ -548,7 +572,7 @@
 
         <!-- スライド3: 重要ポイント -->
         <div class="slide slide-3">
-            <span class="decoration deco-3">💡</span>
+            <img src="images/4.png" class="character-img" style="position: absolute; top: 50px; right: 50px;" alt="ひらめき先生">
             <h2 class="points-header">押さえておきたい3つのポイント</h2>
             <div class="key-points">
                 <div class="point-item">
@@ -583,6 +607,7 @@
 
         <!-- スライド4: 成長グラフ -->
         <div class="slide slide-4">
+            <img src="images/3.png" class="character-img" style="position: absolute; top: 50px; left: 50px;" alt="成長する生徒">
             <h2 class="growth-header">難しい模試でも着実に成長！</h2>
             <div class="chart-container">
                 <div class="chart">
@@ -622,7 +647,7 @@
 
         <!-- スライド5: まとめ -->
         <div class="slide slide-5">
-            <span class="teacher-icon" style="color: white;">👨‍🏫</span>
+            <img src="images/5.png" class="character-large" style="position: absolute; bottom: 40px; right: 50%; transform: translateX(50%);" alt="まとめ先生">
             <h2 class="action-header">今すぐ実践しよう！</h2>
             <div class="action-box">
                 <ul class="final-points">
