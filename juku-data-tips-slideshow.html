@@ -50,27 +50,36 @@
 
         /* 講師アイコン */
         .teacher-icon {
-            width: 150px;
+            width: 200px;
             height: auto;
             position: absolute;
             top: 60px;
             right: 60px;
             animation: bounce 2s ease-in-out infinite;
+            z-index: 10;
         }
         
         /* キャラクター画像共通 */
         .character-img {
-            width: 120px;
+            width: 180px;
             height: auto;
             animation: float 3s ease-in-out infinite;
+            z-index: 10;
         }
         
         .character-small {
-            width: 100px;
+            width: 150px;
+            z-index: 10;
         }
         
         .character-large {
-            width: 180px;
+            width: 250px;
+            z-index: 10;
+        }
+        
+        .character-medium {
+            width: 200px;
+            z-index: 10;
         }
 
         @keyframes bounce {
@@ -154,6 +163,8 @@
             gap: 60px;
             width: 100%;
             max-width: 900px;
+            position: relative;
+            z-index: 5;
         }
 
         .data-card {
@@ -248,6 +259,8 @@
         .key-points {
             width: 100%;
             max-width: 900px;
+            position: relative;
+            z-index: 5;
         }
 
         .point-item {
@@ -313,6 +326,8 @@
             width: 100%;
             max-width: 900px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 5;
         }
 
         .chart {
@@ -502,19 +517,7 @@
             position: absolute;
             opacity: 0.15;
             animation: float 20s ease-in-out infinite;
-        }
-        
-        .bg-char-1 { 
-            width: 80px;
-            top: 10%; 
-            left: 10%; 
-            animation-delay: 0s; 
-        }
-        .bg-char-2 { 
-            width: 100px;
-            bottom: 10%; 
-            right: 10%; 
-            animation-delay: 5s; 
+            z-index: 1;
         }
 
         @keyframes float {
@@ -528,8 +531,8 @@
     <div class="video-container">
         <!-- スライド1: タイトル -->
         <div class="slide slide-1 active">
-            <img src="images/4.png" class="teacher-icon" alt="先生キャラクター">
-            <img src="images/1.png" class="bg-character bg-char-1" alt="背景キャラ">
+            <img src="images/7.png" class="teacher-icon" alt="先生キャラクター">
+            <img src="images/6.png" class="bg-character bg-char-1" style="width: 120px; left: 5%; bottom: 10%;" alt="背景キャラ">
             <h1 class="main-title">
                 塾講師の視点
             </h1>
@@ -544,11 +547,11 @@
 
         <!-- スライド2: データ比較 -->
         <div class="slide slide-2">
-            <img src="images/2.png" class="character-img" style="position: absolute; bottom: 50px; left: 50px;" alt="生徒キャラクター">
+            <img src="images/10.png" class="character-medium" style="position: absolute; bottom: 30px; left: 30px;" alt="学者キャラクター">
             <h2 class="comparison-header">こんなに違う！テストの現実</h2>
             <div class="data-comparison">
                 <div class="data-card school">
-                    <img src="images/3.png" class="character-small" alt="喜ぶ生徒" style="margin-bottom: 20px;">
+                    <img src="images/6.png" class="character-small" alt="喜ぶ生徒" style="margin-bottom: 20px;">
                     <div class="test-type">小学校の<br>カラーテスト</div>
                     <div class="score-large">90</div>
                     <div class="data-details">
@@ -558,7 +561,7 @@
                     </div>
                 </div>
                 <div class="data-card juku">
-                    <img src="images/2.png" class="character-small" alt="考える生徒" style="margin-bottom: 20px;">
+                    <img src="images/9.png" class="character-small" alt="がんばる生徒" style="margin-bottom: 20px;">
                     <div class="test-type">塾の<br>模擬試験</div>
                     <div class="score-large">50</div>
                     <div class="data-details">
@@ -572,7 +575,7 @@
 
         <!-- スライド3: 重要ポイント -->
         <div class="slide slide-3">
-            <img src="images/4.png" class="character-img" style="position: absolute; top: 50px; right: 50px;" alt="ひらめき先生">
+            <img src="images/8.png" class="character-medium" style="position: absolute; top: 40px; right: 40px;" alt="魔法使い先生">
             <h2 class="points-header">押さえておきたい3つのポイント</h2>
             <div class="key-points">
                 <div class="point-item">
@@ -607,7 +610,7 @@
 
         <!-- スライド4: 成長グラフ -->
         <div class="slide slide-4">
-            <img src="images/3.png" class="character-img" style="position: absolute; top: 50px; left: 50px;" alt="成長する生徒">
+            <img src="images/1.png" class="character-medium" style="position: absolute; top: 40px; left: 40px;" alt="成長する生徒たち">
             <h2 class="growth-header">難しい模試でも着実に成長！</h2>
             <div class="chart-container">
                 <div class="chart">
@@ -647,7 +650,7 @@
 
         <!-- スライド5: まとめ -->
         <div class="slide slide-5">
-            <img src="images/5.png" class="character-large" style="position: absolute; bottom: 40px; right: 50%; transform: translateX(50%);" alt="まとめ先生">
+            <img src="images/10.png" class="character-large" style="position: absolute; bottom: 50px; right: 50%; transform: translateX(50%); z-index: 5;" alt="まとめ先生">
             <h2 class="action-header">今すぐ実践しよう！</h2>
             <div class="action-box">
                 <ul class="final-points">
