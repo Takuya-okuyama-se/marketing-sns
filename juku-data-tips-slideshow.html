@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塾講師が教える「データの正しい見方」</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* スライド共通 */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* 講師アイコン（絵文字で代替） */
+        .teacher-icon {
+            font-size: 80px;
+            position: absolute;
+            top: 60px;
+            right: 60px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* スライド1: タイトル */
+        .slide-1 {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            animation: slide1 20s infinite;
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 36px;
+            opacity: 0.9;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .warning-box {
+            background: rgba(231, 76, 60, 0.2);
+            border: 3px solid #e74c3c;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 40px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .warning-text {
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* スライド2: データ比較 */
+        .slide-2 {
+            background: #ecf0f1;
+            animation: slide2 20s infinite;
+        }
+
+        .comparison-header {
+            font-size: 56px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .comparison-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 5px;
+            background: #e74c3c;
+            border-radius: 3px;
+        }
+
+        .data-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+
+        .data-card.school::before {
+            background: #3498db;
+        }
+
+        .data-card.juku::before {
+            background: #e74c3c;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .test-type {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .score-large {
+            font-size: 120px;
+            font-weight: 800;
+            margin: 30px 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        .school .score-large {
+            color: #3498db;
+        }
+
+        .juku .score-large {
+            color: #e74c3c;
+        }
+
+        .score-large::after {
+            content: '点';
+            font-size: 40px;
+            position: absolute;
+            right: -50px;
+            bottom: 20px;
+        }
+
+        .data-details {
+            font-size: 22px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .data-emoji {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        /* スライド3: 重要ポイント */
+        .slide-3 {
+            background: white;
+            animation: slide3 20s infinite;
+        }
+
+        .points-header {
+            font-size: 56px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .key-points {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 45px;
+            background: #f8f9fa;
+            padding: 35px;
+            border-radius: 20px;
+            border-left: 6px solid #e74c3c;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .point-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .point-number {
+            font-size: 56px;
+            font-weight: 800;
+            color: #e74c3c;
+            margin-right: 35px;
+            min-width: 70px;
+        }
+
+        .point-content {
+            flex: 1;
+        }
+
+        .point-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .point-description {
+            font-size: 24px;
+            color: #5d6d7e;
+            line-height: 1.5;
+        }
+
+        /* スライド4: グラフ */
+        .slide-4 {
+            background: #f4f6f7;
+            animation: slide4 20s infinite;
+        }
+
+        .growth-header {
+            font-size: 52px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 400px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .bar {
+            width: 120px;
+            background: linear-gradient(to top, #3498db, #5dade2);
+            border-radius: 15px 15px 0 0;
+            position: relative;
+            margin-bottom: 20px;
+            transition: all 0.5s;
+            animation: growBar 1s ease-out forwards;
+        }
+
+        @keyframes growBar {
+            from { height: 0; }
+            to { height: var(--bar-height); }
+        }
+
+        .bar-1 { --bar-height: 180px; animation-delay: 0.2s; }
+        .bar-2 { --bar-height: 230px; animation-delay: 0.4s; }
+        .bar-3 { --bar-height: 290px; animation-delay: 0.6s; }
+        .bar-4 { --bar-height: 350px; animation-delay: 0.8s; }
+
+        .bar-value {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .bar-label {
+            font-size: 22px;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chart-note {
+            font-size: 26px;
+            color: #5d6d7e;
+            text-align: center;
+            line-height: 1.6;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .improvement-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        /* スライド5: まとめ */
+        .slide-5 {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            animation: slide5 20s infinite;
+        }
+
+        .action-header {
+            font-size: 60px;
+            font-weight: 800;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .action-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 60px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            max-width: 850px;
+        }
+
+        .final-points {
+            font-size: 32px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .final-points li {
+            list-style: none;
+            padding-left: 50px;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .final-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-size: 36px;
+            color: #2ecc71;
+        }
+
+        .cta-message {
+            background: #e74c3c;
+            padding: 30px 50px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
+        }
+
+        /* アニメーションタイミング */
+        @keyframes slide1 {
+            0%, 20% { opacity: 1; }
+            21%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide2 {
+            0%, 19% { opacity: 0; }
+            20%, 40% { opacity: 1; }
+            41%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide3 {
+            0%, 39% { opacity: 0; }
+            40%, 60% { opacity: 1; }
+            61%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide4 {
+            0%, 59% { opacity: 0; }
+            60%, 80% { opacity: 1; }
+            81%, 100% { opacity: 0; }
+        }
+
+        @keyframes slide5 {
+            0%, 79% { opacity: 0; }
+            80%, 100% { opacity: 1; }
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            animation: progress 20s linear infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* 装飾的な要素 */
+        .decoration {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(-5deg); }
+            75% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .deco-1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .deco-2 { bottom: 10%; right: 10%; animation-delay: 5s; }
+        .deco-3 { top: 50%; left: 5%; animation-delay: 10s; }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active">
+            <span class="teacher-icon">👨‍🏫</span>
+            <span class="decoration deco-1">📊</span>
+            <h1 class="main-title">
+                塾講師の視点
+            </h1>
+            <p class="subtitle">データは厳しいものを参考にしよう！</p>
+            <div class="warning-box">
+                <p class="warning-text">
+                    ⚠️ 小学校のカラーテストで<br>
+                    判断するのは危険！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: データ比較 -->
+        <div class="slide slide-2">
+            <span class="decoration deco-2">📈</span>
+            <h2 class="comparison-header">こんなに違う！テストの現実</h2>
+            <div class="data-comparison">
+                <div class="data-card school">
+                    <div class="data-emoji">🏫</div>
+                    <div class="test-type">小学校の<br>カラーテスト</div>
+                    <div class="score-large">90</div>
+                    <div class="data-details">
+                        基礎的な内容のみ<br>
+                        クラス内での評価<br>
+                        <strong>母数：30〜40人</strong>
+                    </div>
+                </div>
+                <div class="data-card juku">
+                    <div class="data-emoji">📝</div>
+                    <div class="test-type">塾の<br>模擬試験</div>
+                    <div class="score-large">50</div>
+                    <div class="data-details">
+                        応用問題も含む<br>
+                        全国レベルで評価<br>
+                        <strong>母数：数千〜数万人</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド3: 重要ポイント -->
+        <div class="slide slide-3">
+            <span class="decoration deco-3">💡</span>
+            <h2 class="points-header">押さえておきたい3つのポイント</h2>
+            <div class="key-points">
+                <div class="point-item">
+                    <div class="point-number">1</div>
+                    <div class="point-content">
+                        <div class="point-title">母数の多いデータを重視</div>
+                        <div class="point-description">
+                            全国規模の模試こそが<br>本当の実力を映し出す鏡
+                        </div>
+                    </div>
+                </div>
+                <div class="point-item">
+                    <div class="point-number">2</div>
+                    <div class="point-content">
+                        <div class="point-title">平均50点台は普通</div>
+                        <div class="point-description">
+                            模試は難しくて当たり前<br>難易度に慣れることが大切
+                        </div>
+                    </div>
+                </div>
+                <div class="point-item">
+                    <div class="point-number">3</div>
+                    <div class="point-content">
+                        <div class="point-title">下振れを想定する</div>
+                        <div class="point-description">
+                            上振れではなく<br>最悪のケースで準備を
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド4: 成長グラフ -->
+        <div class="slide slide-4">
+            <h2 class="growth-header">難しい模試でも着実に成長！</h2>
+            <div class="chart-container">
+                <div class="chart">
+                    <div class="bar-group">
+                        <div class="bar bar-1" style="height: 180px;">
+                            <div class="bar-value">45点</div>
+                        </div>
+                        <div class="bar-label">初回</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bar-2" style="height: 230px;">
+                            <div class="bar-value">52点</div>
+                        </div>
+                        <div class="bar-label">3ヶ月後</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bar-3" style="height: 290px;">
+                            <div class="bar-value">63点</div>
+                        </div>
+                        <div class="bar-label">6ヶ月後</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar bar-4" style="height: 350px;">
+                            <div class="bar-value">71点</div>
+                        </div>
+                        <div class="bar-label">9ヶ月後</div>
+                    </div>
+                </div>
+                <div class="chart-note">
+                    最初は50点以下でも大丈夫！<br>
+                    継続的に受験することで確実に伸びます
+                    <br>
+                    <span class="improvement-badge">+26点UP!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: まとめ -->
+        <div class="slide slide-5">
+            <span class="teacher-icon" style="color: white;">👨‍🏫</span>
+            <h2 class="action-header">今すぐ実践しよう！</h2>
+            <div class="action-box">
+                <ul class="final-points">
+                    <li>定期的に模試を受験する</li>
+                    <li>詳細なデータ分析を活用</li>
+                    <li>弱点を明確にして対策</li>
+                    <li>難易度に慣れることが重要</li>
+                </ul>
+                <div class="cta-message">
+                    厳しいデータが<br>
+                    確実な成長への第一歩！
+                </div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress"></div>
+    </div>
+
+    <script>
+        // スライドショーの制御
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        // 自動再生機能
+        let autoPlayTimeouts = [];
+        
+        function startAutoPlay() {
+            // すべてのタイムアウトをクリア
+            autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+            autoPlayTimeouts = [];
+            
+            currentSlide = 0;
+            showSlide(currentSlide);
+            
+            // 各スライドの表示時間（合計20秒）
+            const slideDurations = [4000, 4000, 4000, 4000, 4000];
+            let totalTime = 0;
+            
+            slideDurations.forEach((duration, index) => {
+                if (index > 0) {
+                    const timeout = setTimeout(() => {
+                        currentSlide = index;
+                        showSlide(currentSlide);
+                    }, totalTime);
+                    autoPlayTimeouts.push(timeout);
+                }
+                totalTime += duration;
+            });
+        }
+
+        // 手動操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            } else if (e.key === 'ArrowLeft') {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            } else if (e.key === ' ') {
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'reset') {
+                autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+                currentSlide = 0;
+                showSlide(currentSlide);
+            }
+        });
+
+        // アニメーションの開始
+        showSlide(0);
+    </script>
+</body>
+</html>
