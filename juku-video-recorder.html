@@ -219,6 +219,38 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
         }
+        
+        /* スライド番号表示 */
+        .slide-indicator-top {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #34495e;
+            color: white;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .slide-number {
+            font-size: 32px;
+            color: #e74c3c;
+            font-weight: 700;
+        }
+        
+        .slide-total {
+            font-size: 24px;
+        }
+        
+        .slide-title {
+            margin-left: 20px;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .preview-section {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -260,8 +292,14 @@
             </span>
         </div>
         
-        <div class="preview-container">
-            <iframe id="slideshow" src="juku-data-tips-slideshow.html" width="1080" height="1080"></iframe>
+        <div class="preview-section">
+            <div class="slide-indicator-top" id="slideIndicatorTop">
+                <span class="slide-number" id="currentSlideNum">1</span> / <span class="slide-total">5</span>
+                <span class="slide-title" id="slideTitle">タイトル</span>
+            </div>
+            <div class="preview-container">
+                <iframe id="slideshow" src="juku-data-tips-slideshow.html" width="1080" height="1080"></iframe>
+            </div>
         </div>
         
         <div class="tips">
@@ -286,6 +324,16 @@
         let isRecording = false;
         let recordingTimer;
         let elapsedTime = 0;
+        let currentSlide = 0;
+        
+        // スライドタイトル
+        const slideTitles = [
+            'タイトル',
+            'データ比較',
+            '重要ポイント',
+            '成長グラフ',
+            'まとめ'
+        ];
         
         const slideshow = document.getElementById('slideshow');
         const recordBtn = document.getElementById('recordBtn');
@@ -298,15 +346,36 @@
         const timer = document.getElementById('timer');
         const recordingIndicator = document.getElementById('recordingIndicator');
         
+        // スライド番号を更新
+        function updateSlideIndicator() {
+            document.getElementById('currentSlideNum').textContent = currentSlide + 1;
+            document.getElementById('slideTitle').textContent = slideTitles[currentSlide];
+        }
+        
         // プレビュー再生
         function startPreview() {
+            currentSlide = 0;
+            updateSlideIndicator();
             slideshow.contentWindow.postMessage({ action: 'startAutoPlay' }, '*');
             status.textContent = '▶️ プレビュー再生中（20秒）';
             status.className = 'status ready';
             
+            // スライド切り替えのタイミングを追跡
+            let slideTimings = [0, 4000, 8000, 12000, 16000];
+            slideTimings.forEach((timing, index) => {
+                if (index > 0) {
+                    setTimeout(() => {
+                        currentSlide = index;
+                        updateSlideIndicator();
+                    }, timing);
+                }
+            });
+            
             // 20秒後に停止
             setTimeout(() => {
                 status.textContent = '📹 録画準備完了';
+                currentSlide = 0;
+                updateSlideIndicator();
             }, 20000);
         }
         
@@ -368,7 +437,20 @@
                 recordingIndicator.style.display = 'inline-flex';
                 
                 // スライドショーを開始
+                currentSlide = 0;
+                updateSlideIndicator();
                 slideshow.contentWindow.postMessage({ action: 'startAutoPlay' }, '*');
+                
+                // スライド切り替えのタイミングを追跡
+                let slideTimings = [0, 4000, 8000, 12000, 16000];
+                slideTimings.forEach((timing, index) => {
+                    if (index > 0) {
+                        setTimeout(() => {
+                            currentSlide = index;
+                            updateSlideIndicator();
+                        }, timing);
+                    }
+                });
                 
                 // タイマー開始
                 startTimer();
@@ -441,12 +523,17 @@
         function resetRecorder() {
             stopRecording();
             downloadSection.classList.remove('show');
+            currentSlide = 0;
+            updateSlideIndicator();
             slideshow.contentWindow.postMessage({ action: 'reset' }, '*');
             status.textContent = '📹 録画準備完了';
             status.className = 'status ready';
             timer.style.display = 'none';
             recordingIndicator.style.display = 'none';
         }
+        
+        // 初期化
+        updateSlideIndicator();
         
         // ページ離脱時の処理
         window.addEventListener('beforeunload', () => {
