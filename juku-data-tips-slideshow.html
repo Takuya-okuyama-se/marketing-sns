@@ -246,6 +246,7 @@
         .slide-3 {
             background: white;
             animation: slide3 20s infinite;
+            position: relative;
         }
 
         .points-header {
@@ -260,7 +261,7 @@
             width: 100%;
             max-width: 900px;
             position: relative;
-            z-index: 5;
+            z-index: 20;
         }
 
         .point-item {
@@ -546,7 +547,6 @@
 
         <!-- スライド2: データ比較 -->
         <div class="slide slide-2">
-            <img src="images/10.png" class="character-medium" style="position: absolute; bottom: 30px; left: 30px;" alt="学者キャラクター">
             <h2 class="comparison-header">こんなに違う！テストの現実</h2>
             <div class="data-comparison">
                 <div class="data-card school">
@@ -574,7 +574,7 @@
 
         <!-- スライド3: 重要ポイント -->
         <div class="slide slide-3">
-            <img src="images/8.png" class="character-medium" style="position: absolute; top: 40px; right: 40px;" alt="魔法使い先生">
+            <img src="images/8.png" class="character-medium" style="position: absolute; top: 40px; right: 40px; z-index: 5;" alt="魔法使い先生">
             <h2 class="points-header">押さえておきたい3つのポイント</h2>
             <div class="key-points">
                 <div class="point-item">
@@ -727,6 +727,10 @@
             } else if (event.data.action === 'reset') {
                 autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
                 currentSlide = 0;
+                showSlide(currentSlide);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+                currentSlide = event.data.slideIndex;
                 showSlide(currentSlide);
             }
         });

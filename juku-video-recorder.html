@@ -230,6 +230,7 @@
             border-radius: 10px;
             font-size: 20px;
             font-weight: 600;
+            position: relative;
         }
         
         .slide-number {
@@ -250,6 +251,47 @@
         
         .preview-section {
             margin-bottom: 20px;
+        }
+        
+        /* Navigation buttons */
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide-nav:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .slide-nav.prev {
+            left: 15px;
+        }
+        
+        .slide-nav.next {
+            right: 15px;
+        }
+        
+        .slide-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .slide-nav:disabled:hover {
+            transform: translateY(-50%);
         }
     </style>
 </head>
@@ -294,8 +336,10 @@
         
         <div class="preview-section">
             <div class="slide-indicator-top" id="slideIndicatorTop">
+                <button class="slide-nav prev" id="prevSlide" onclick="navigateSlide(-1)">←</button>
                 <span class="slide-number" id="currentSlideNum">1</span> / <span class="slide-total">5</span>
                 <span class="slide-title" id="slideTitle">タイトル</span>
+                <button class="slide-nav next" id="nextSlide" onclick="navigateSlide(1)">→</button>
             </div>
             <div class="preview-container">
                 <iframe id="slideshow" src="juku-data-tips-slideshow.html" width="1080" height="1080"></iframe>
@@ -350,6 +394,27 @@
         function updateSlideIndicator() {
             document.getElementById('currentSlideNum').textContent = currentSlide + 1;
             document.getElementById('slideTitle').textContent = slideTitles[currentSlide];
+            
+            // Update navigation button states
+            document.getElementById('prevSlide').disabled = currentSlide === 0;
+            document.getElementById('nextSlide').disabled = currentSlide === slideTitles.length - 1;
+        }
+        
+        // Navigate slides manually
+        function navigateSlide(direction) {
+            if (isRecording) return; // Don't allow navigation during recording
+            
+            const newSlide = currentSlide + direction;
+            if (newSlide >= 0 && newSlide < slideTitles.length) {
+                currentSlide = newSlide;
+                updateSlideIndicator();
+                
+                // Send message to slideshow to show specific slide
+                slideshow.contentWindow.postMessage({ 
+                    action: 'showSlide', 
+                    slideIndex: currentSlide 
+                }, '*');
+            }
         }
         
         // プレビュー再生
