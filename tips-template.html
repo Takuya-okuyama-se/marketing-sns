@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tips動画テンプレート</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* キャラクター画像共通 */
+        .character-img {
+            width: 180px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* スライド1: タイトル（テンプレート） */
+        .slide-1 {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.2;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 36px;
+            opacity: 0.9;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .highlight-box {
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .highlight-text {
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* スライド2-4: コンテンツスライド（テンプレート） */
+        .content-slide {
+            background: white;
+        }
+
+        .content-header {
+            font-size: 56px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .content-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 5px;
+            background: #3498db;
+            border-radius: 3px;
+        }
+
+        /* コンテンツレイアウトのバリエーション */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .content-item {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .content-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .content-list {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .list-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            border-left: 5px solid #3498db;
+        }
+
+        .list-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #3498db;
+            margin-right: 30px;
+            min-width: 60px;
+        }
+
+        .list-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .list-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .list-description {
+            font-size: 20px;
+            color: #5d6d7e;
+            line-height: 1.5;
+        }
+
+        /* スライド5: まとめ（テンプレート） */
+        .slide-5 {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+        }
+
+        .action-header {
+            font-size: 60px;
+            font-weight: 800;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .action-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 60px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            max-width: 850px;
+        }
+
+        .final-points {
+            font-size: 32px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+
+        .final-points li {
+            list-style: none;
+            padding-left: 50px;
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .final-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-size: 36px;
+            color: #2ecc71;
+        }
+
+        .cta-message {
+            background: #e74c3c;
+            padding: 30px 50px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* ナビゲーション */
+        .nav-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #3498db;
+            transform: scale(1.3);
+        }
+
+        /* テンプレート用のガイドテキスト */
+        .template-guide {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <div class="template-guide">
+            💡 テンプレートガイド: 各スライドの内容を編集してオリジナルのTips動画を作成できます
+        </div>
+
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active">
+            <img src="images/7.png" class="character-img" style="position: absolute; top: 60px; right: 60px;" alt="キャラクター">
+            <h1 class="main-title">
+                【タイトルを入力】<br>
+                例：成績アップの秘訣
+            </h1>
+            <p class="subtitle">【サブタイトルを入力】</p>
+            <div class="highlight-box">
+                <p class="highlight-text">
+                    【キーメッセージを入力】<br>
+                    例：たった3つのポイントで劇的改善！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: コンテンツ（グリッドレイアウト） -->
+        <div class="slide content-slide slide-2">
+            <h2 class="content-header">【セクションタイトル】</h2>
+            <div class="content-grid">
+                <div class="content-item">
+                    <img src="images/6.png" class="character-img" style="width: 120px; margin-bottom: 20px;" alt="アイコン">
+                    <h3 style="font-size: 28px; color: #2c3e50; margin-bottom: 15px;">【項目1】</h3>
+                    <p style="font-size: 20px; color: #5d6d7e; line-height: 1.5;">
+                        【説明文を入力】
+                    </p>
+                </div>
+                <div class="content-item">
+                    <img src="images/9.png" class="character-img" style="width: 120px; margin-bottom: 20px;" alt="アイコン">
+                    <h3 style="font-size: 28px; color: #2c3e50; margin-bottom: 15px;">【項目2】</h3>
+                    <p style="font-size: 20px; color: #5d6d7e; line-height: 1.5;">
+                        【説明文を入力】
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド3: コンテンツ（リストレイアウト） -->
+        <div class="slide content-slide slide-3">
+            <h2 class="content-header">【セクションタイトル】</h2>
+            <div class="content-list">
+                <div class="list-item">
+                    <div class="list-number">1</div>
+                    <div class="list-content">
+                        <div class="list-title">【ポイント1のタイトル】</div>
+                        <div class="list-description">
+                            【詳細説明を入力】
+                        </div>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-number">2</div>
+                    <div class="list-content">
+                        <div class="list-title">【ポイント2のタイトル】</div>
+                        <div class="list-description">
+                            【詳細説明を入力】
+                        </div>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-number">3</div>
+                    <div class="list-content">
+                        <div class="list-title">【ポイント3のタイトル】</div>
+                        <div class="list-description">
+                            【詳細説明を入力】
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド4: ビジュアルコンテンツ（カスタマイズ可能） -->
+        <div class="slide content-slide slide-4">
+            <h2 class="content-header">【セクションタイトル】</h2>
+            <div style="text-align: center;">
+                <img src="images/1.png" class="character-img" style="width: 300px; margin-bottom: 40px;" alt="メインビジュアル">
+                <div style="background: #f8f9fa; border-radius: 20px; padding: 40px; max-width: 800px; margin: 0 auto;">
+                    <p style="font-size: 32px; color: #2c3e50; font-weight: 700; margin-bottom: 20px;">
+                        【メインメッセージ】
+                    </p>
+                    <p style="font-size: 24px; color: #5d6d7e; line-height: 1.6;">
+                        【補足説明やデータなど】
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: まとめ/CTA -->
+        <div class="slide slide-5">
+            <img src="images/10.png" class="character-img" style="position: absolute; bottom: 50px; right: 50%; transform: translateX(50%); width: 250px;" alt="まとめキャラクター">
+            <h2 class="action-header">【まとめタイトル】</h2>
+            <div class="action-box">
+                <ul class="final-points">
+                    <li>【重要ポイント1】</li>
+                    <li>【重要ポイント2】</li>
+                    <li>【重要ポイント3】</li>
+                    <li>【重要ポイント4】</li>
+                </ul>
+                <div class="cta-message">
+                    【行動喚起メッセージ】<br>
+                    例：今すぐ始めよう！
+                </div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            currentSlide = index;
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 4000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                stopAutoPlay();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                stopAutoPlay();
+                previousSlide();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'reset') {
+                stopAutoPlay();
+                showSlide(0);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                stopAutoPlay();
+                showSlide(event.data.slideIndex);
+            }
+        });
+
+        // 初期表示
+        showSlide(0);
+    </script>
+</body>
+</html>
