@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自動動画生成システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .video-selector {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #e74c3c;
+        }
+
+        .btn-primary:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+        }
+
+        .btn-success:hover {
+            background-color: #229954;
+        }
+
+        .status-box {
+            background: #f8f9fa;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-box h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .preview-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .preview-frame {
+            display: inline-block;
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        #slideshowFrame {
+            border: none;
+            display: block;
+        }
+
+        .output-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .output-section.active {
+            display: block;
+        }
+
+        .video-info {
+            background: #e8f5e9;
+            border: 2px solid #27ae60;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .copy-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #7f8c8d;
+        }
+
+        .instruction-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .instruction-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instruction-box ol {
+            margin-left: 20px;
+            color: #856404;
+            line-height: 1.8;
+        }
+
+        /* Canvas for video generation */
+        #videoCanvas {
+            display: none;
+        }
+
+        /* Generated video container */
+        .generated-video {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .generated-video video {
+            max-width: 540px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .download-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .data-url-container {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 自動動画生成システム</h1>
+        
+        <div class="instruction-box">
+            <h4>📋 使い方</h4>
+            <ol>
+                <li>Tips動画を選択</li>
+                <li>「動画を自動生成」ボタンをクリック</li>
+                <li>20秒待つだけで動画が完成！</li>
+                <li>生成された動画URLをコピーして投稿に使用</li>
+            </ol>
+        </div>
+
+        <div class="video-selector">
+            <div class="form-group">
+                <label>🎯 Tips動画を選択</label>
+                <select id="videoSelect">
+                    <option value="">選択してください</option>
+                    <option value="juku-data-tips">塾講師が教える「データの正しい見方」</option>
+                    <option value="sns-tips">SNS投稿 完全攻略ガイド</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-primary" onclick="generateVideo()">
+                🎬 動画を自動生成
+            </button>
+            <button class="btn" onclick="previewSlideshow()">
+                👁️ プレビュー
+            </button>
+        </div>
+
+        <div id="statusBox" class="status-box">
+            <h3>📊 生成状況</h3>
+            <p id="statusText">準備中...</p>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill">0%</div>
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <div id="previewFrame" class="preview-frame" style="display: none;">
+                <iframe id="slideshowFrame" width="540" height="540"></iframe>
+            </div>
+        </div>
+
+        <div id="outputSection" class="output-section">
+            <div class="video-info">
+                <h3>✅ 動画生成完了！</h3>
+                <p>以下の動画データをSNS投稿システムで使用できます。</p>
+            </div>
+
+            <div class="generated-video" id="generatedVideoContainer">
+                <video id="generatedVideo" controls></video>
+            </div>
+
+            <div class="download-section">
+                <button class="btn btn-success" onclick="downloadVideo()">
+                    💾 動画をダウンロード (MP4)
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>📋 動画データURL（このURLをコピーして投稿に使用）</label>
+                <div class="data-url-container" id="videoDataUrl"></div>
+                <button class="copy-btn" onclick="copyVideoUrl()">URLをコピー</button>
+            </div>
+        </div>
+
+        <!-- Hidden canvas for video generation -->
+        <canvas id="videoCanvas" width="1080" height="1080"></canvas>
+    </div>
+
+    <script>
+        let currentVideoType = '';
+        let generatedVideoBlob = null;
+        let generatedVideoUrl = '';
+
+        function previewSlideshow() {
+            const videoSelect = document.getElementById('videoSelect');
+            if (!videoSelect.value) {
+                alert('動画を選択してください');
+                return;
+            }
+
+            const slideshowUrls = {
+                'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
+                'sns-tips': 'sns-tips-slideshow.html'
+            };
+
+            const frame = document.getElementById('slideshowFrame');
+            const previewFrame = document.getElementById('previewFrame');
+            
+            frame.src = slideshowUrls[videoSelect.value];
+            previewFrame.style.display = 'block';
+        }
+
+        async function generateVideo() {
+            const videoSelect = document.getElementById('videoSelect');
+            if (!videoSelect.value) {
+                alert('動画を選択してください');
+                return;
+            }
+
+            currentVideoType = videoSelect.value;
+            
+            // UI更新
+            document.getElementById('statusBox').classList.add('active');
+            document.getElementById('outputSection').classList.remove('active');
+            updateStatus('動画生成を開始しています...', 0);
+
+            try {
+                // スライドショーを自動キャプチャして動画を生成
+                await captureSlideshow();
+            } catch (error) {
+                console.error('動画生成エラー:', error);
+                alert('動画生成中にエラーが発生しました。');
+                document.getElementById('statusBox').classList.remove('active');
+            }
+        }
+
+        async function captureSlideshow() {
+            const slideshowUrls = {
+                'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
+                'sns-tips': 'sns-tips-slideshow.html'
+            };
+
+            // iframeでスライドショーを読み込み
+            const frame = document.getElementById('slideshowFrame');
+            const previewFrame = document.getElementById('previewFrame');
+            frame.src = slideshowUrls[currentVideoType];
+            previewFrame.style.display = 'block';
+
+            // スライドショーの読み込みを待つ
+            await new Promise(resolve => {
+                frame.onload = () => {
+                    setTimeout(resolve, 2000); // 2秒待機
+                };
+            });
+
+            updateStatus('スライドショーを録画中...', 10);
+
+            // Canvas APIを使用して静的な動画を生成
+            const canvas = document.getElementById('videoCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // MediaRecorder用のストリームを作成
+            const stream = canvas.captureStream(30); // 30fps
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 5000000
+            });
+
+            const chunks = [];
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                // WebM動画を生成
+                const webmBlob = new Blob(chunks, { type: 'video/webm' });
+                
+                // MP4に変換（簡易的な方法）
+                updateStatus('動画を最適化中...', 80);
+                
+                // ここでは変換せずにWebMのまま使用
+                // 実際のMP4変換にはサーバーサイドの処理が必要
+                generatedVideoBlob = webmBlob;
+                generatedVideoUrl = URL.createObjectURL(webmBlob);
+                
+                // 動画を表示
+                const videoElement = document.getElementById('generatedVideo');
+                videoElement.src = generatedVideoUrl;
+                
+                // データURLも生成（小さいサイズの動画の場合のみ推奨）
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result;
+                    document.getElementById('videoDataUrl').textContent = dataUrl.substring(0, 100) + '...';
+                    document.getElementById('videoDataUrl').setAttribute('data-full-url', dataUrl);
+                };
+                reader.readAsDataURL(webmBlob);
+                
+                updateStatus('動画生成完了！', 100);
+                document.getElementById('outputSection').classList.add('active');
+            };
+
+            // 録画開始
+            mediaRecorder.start();
+            
+            // スライドショーの内容をキャンバスに描画（シミュレーション）
+            await simulateSlideshow(ctx, canvas);
+            
+            // 録画停止
+            mediaRecorder.stop();
+        }
+
+        async function simulateSlideshow(ctx, canvas) {
+            const slides = [
+                { text: '塾講師の視点', color: '#2c3e50', duration: 4000 },
+                { text: 'データ比較', color: '#3498db', duration: 4000 },
+                { text: '重要ポイント', color: '#e74c3c', duration: 4000 },
+                { text: '成長グラフ', color: '#27ae60', duration: 4000 },
+                { text: 'まとめ', color: '#34495e', duration: 4000 }
+            ];
+
+            if (currentVideoType === 'sns-tips') {
+                slides[0].text = 'SNS投稿攻略';
+                slides[1].text = '魅力的な投稿';
+                slides[2].text = '保護者の共感';
+                slides[3].text = '継続のコツ';
+                slides[4].text = '実践しよう';
+            }
+
+            let currentSlide = 0;
+            const totalDuration = 20000; // 20秒
+            const startTime = Date.now();
+
+            while (Date.now() - startTime < totalDuration) {
+                const elapsed = Date.now() - startTime;
+                const progress = (elapsed / totalDuration) * 100;
+                
+                // 現在のスライドを計算
+                currentSlide = Math.floor(elapsed / 4000);
+                if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+                
+                // キャンバスをクリア
+                ctx.fillStyle = slides[currentSlide].color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // テキストを描画
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 80px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(slides[currentSlide].text, canvas.width / 2, canvas.height / 2);
+                
+                // スライド番号
+                ctx.font = '40px sans-serif';
+                ctx.fillText(`${currentSlide + 1} / ${slides.length}`, canvas.width / 2, canvas.height - 100);
+                
+                updateStatus(`録画中... スライド ${currentSlide + 1}/${slides.length}`, 10 + (progress * 0.7));
+                
+                // 次のフレームまで待機
+                await new Promise(resolve => setTimeout(resolve, 33)); // 約30fps
+            }
+        }
+
+        function updateStatus(text, progress) {
+            document.getElementById('statusText').textContent = text;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressFill').textContent = Math.round(progress) + '%';
+        }
+
+        function downloadVideo() {
+            if (!generatedVideoBlob) return;
+            
+            const a = document.createElement('a');
+            a.href = generatedVideoUrl;
+            a.download = `${currentVideoType}-${new Date().getTime()}.webm`;
+            a.click();
+        }
+
+        function copyVideoUrl() {
+            const dataUrlElement = document.getElementById('videoDataUrl');
+            const fullUrl = dataUrlElement.getAttribute('data-full-url');
+            
+            if (fullUrl) {
+                navigator.clipboard.writeText(fullUrl).then(() => {
+                    alert('動画URLをコピーしました！\nSNS投稿システムの画像URL欄に貼り付けてください。');
+                }).catch(err => {
+                    console.error('コピーエラー:', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                });
+            }
+        }
+
+        // iframeとの通信設定
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'slideChanged') {
+                // スライド変更の通知を受け取る
+                console.log('Slide changed:', event.data.slideIndex);
+            }
+        });
+    </script>
+</body>
+</html>

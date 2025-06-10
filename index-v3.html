@@ -613,10 +613,25 @@
                     <div id="videoPreviewContainer" style="margin-top: 15px; display: none;">
                         <iframe id="videoPreview" width="400" height="400" style="border: 2px solid #ddd; border-radius: 10px;"></iframe>
                         <div style="margin-top: 10px;">
-                            <button class="btn" onclick="recordVideo()">🎥 動画を録画</button>
+                            <button class="btn btn-primary" onclick="autoGenerateVideo()">🎬 動画を自動生成</button>
                             <button class="btn" onclick="viewSlideshow()">👁️ スライドを確認</button>
                         </div>
-                        <small style="display: block; margin-top: 10px; color: #666;">※ 録画した動画はGoogle Driveに保存してURLを設定してください</small>
+                        <div id="videoGenerationStatus" style="display: none; margin-top: 15px;">
+                            <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 15px;">
+                                <p style="margin: 0; color: #1565c0; font-weight: bold;">
+                                    <span id="generationStatusText">動画を生成中...</span>
+                                </p>
+                                <div style="width: 100%; height: 20px; background: #e0e0e0; border-radius: 10px; margin-top: 10px; overflow: hidden;">
+                                    <div id="generationProgress" style="width: 0%; height: 100%; background: #2196f3; transition: width 0.3s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="generatedVideoContainer" style="display: none; margin-top: 15px;">
+                            <video id="generatedVideoPreview" width="100%" style="max-width: 400px; border-radius: 8px;" controls></video>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-success" onclick="useGeneratedVideo()">✅ この動画を使用</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1224,24 +1239,144 @@
             }
         }
         
-        function recordVideo() {
+        // 動画自動生成機能
+        let generatedVideoDataUrl = '';
+        
+        async function autoGenerateVideo() {
             const videoSelect = document.getElementById('tipsVideoSelect');
-            
             if (!videoSelect.value) {
                 alert('動画を選択してください');
                 return;
             }
             
-            // 録画ページへのURLマッピング
-            const recorderUrls = {
-                'juku-data-tips': 'juku-video-recorder.html',
-                'sns-tips': 'video-recorder.html'
+            // UI更新
+            document.getElementById('videoGenerationStatus').style.display = 'block';
+            document.getElementById('generatedVideoContainer').style.display = 'none';
+            updateGenerationStatus('動画を生成中...', 0);
+            
+            try {
+                // 簡易的な動画生成（実際にはキャンバスAPIを使用）
+                await generateVideoFromSlideshow(videoSelect.value);
+            } catch (error) {
+                console.error('動画生成エラー:', error);
+                alert('動画生成中にエラーが発生しました。');
+                document.getElementById('videoGenerationStatus').style.display = 'none';
+            }
+        }
+        
+        async function generateVideoFromSlideshow(videoType) {
+            // Canvas要素を作成
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+            
+            // MediaRecorderの設定
+            const stream = canvas.captureStream(30);
+            const mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9',
+                videoBitsPerSecond: 2000000
+            });
+            
+            const chunks = [];
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                }
             };
             
-            const recorderUrl = recorderUrls[videoSelect.value];
-            if (recorderUrl) {
-                window.open(recorderUrl, '_blank');
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    generatedVideoDataUrl = reader.result;
+                    
+                    // プレビュー表示
+                    const videoElement = document.getElementById('generatedVideoPreview');
+                    videoElement.src = generatedVideoDataUrl;
+                    
+                    document.getElementById('videoGenerationStatus').style.display = 'none';
+                    document.getElementById('generatedVideoContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(blob);
+            };
+            
+            // 録画開始
+            mediaRecorder.start();
+            
+            // スライドを描画（簡易版）
+            const slides = getSlideData(videoType);
+            for (let i = 0; i < slides.length; i++) {
+                await drawSlide(ctx, slides[i], i + 1, slides.length);
+                await sleep(4000); // 各スライド4秒
+                updateGenerationStatus(`スライド ${i + 1}/${slides.length} を処理中...`, ((i + 1) / slides.length) * 100);
             }
+            
+            // 録画停止
+            mediaRecorder.stop();
+        }
+        
+        function getSlideData(videoType) {
+            if (videoType === 'juku-data-tips') {
+                return [
+                    { title: '塾講師の視点', subtitle: 'データは厳しいものを参考にしよう！', bg: '#2c3e50' },
+                    { title: 'データ比較', subtitle: '小学校 vs 塾のテスト', bg: '#3498db' },
+                    { title: '重要ポイント', subtitle: '押さえておきたい3つのポイント', bg: '#e74c3c' },
+                    { title: '成長グラフ', subtitle: '難しい模試でも着実に成長！', bg: '#27ae60' },
+                    { title: 'まとめ', subtitle: '今すぐ実践しよう！', bg: '#34495e' }
+                ];
+            } else {
+                return [
+                    { title: 'SNS投稿攻略', subtitle: '塾の魅力を伝える5つのコツ', bg: '#3498db' },
+                    { title: '魅力的な投稿', subtitle: '写真と文章の黄金比', bg: '#e74c3c' },
+                    { title: '保護者の共感', subtitle: '心に響くメッセージ', bg: '#f39c12' },
+                    { title: '継続のコツ', subtitle: '無理なく続ける方法', bg: '#27ae60' },
+                    { title: '実践しよう', subtitle: '今日から始められること', bg: '#8e44ad' }
+                ];
+            }
+        }
+        
+        async function drawSlide(ctx, slide, slideNumber, totalSlides) {
+            // 背景
+            ctx.fillStyle = slide.bg;
+            ctx.fillRect(0, 0, 1080, 1080);
+            
+            // タイトル
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 80px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(slide.title, 540, 400);
+            
+            // サブタイトル
+            ctx.font = '40px sans-serif';
+            ctx.fillText(slide.subtitle, 540, 500);
+            
+            // スライド番号
+            ctx.font = '30px sans-serif';
+            ctx.fillText(`${slideNumber} / ${totalSlides}`, 540, 950);
+        }
+        
+        function updateGenerationStatus(text, progress) {
+            document.getElementById('generationStatusText').textContent = text;
+            document.getElementById('generationProgress').style.width = progress + '%';
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function useGeneratedVideo() {
+            if (!generatedVideoDataUrl) {
+                alert('動画が生成されていません。');
+                return;
+            }
+            
+            // 画像URL欄に動画データURLを設定
+            document.getElementById('imageUrl').value = generatedVideoDataUrl.substring(0, 100) + '...';
+            document.getElementById('imageUrl').setAttribute('data-full-url', generatedVideoDataUrl);
+            
+            alert('動画が設定されました！\n※ データURLが長いため、表示は省略されています。');
         }
         
         function viewSlideshow() {
