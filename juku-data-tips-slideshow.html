@@ -351,11 +351,18 @@
             position: relative;
             margin-bottom: 20px;
             transition: all 0.5s;
+            height: var(--bar-height);
         }
 
         @keyframes growBar {
-            from { height: 0; }
-            to { height: var(--bar-height); }
+            from { 
+                height: 0;
+                opacity: 0;
+            }
+            to { 
+                height: var(--bar-height);
+                opacity: 1;
+            }
         }
 
         .bar-1 { --bar-height: 180px; }
@@ -364,6 +371,11 @@
         .bar-4 { --bar-height: 350px; }
         
         /* スライド4がアクティブな時のみバーアニメーションを実行 */
+        .slide-4 .bar {
+            height: 0;
+            opacity: 0;
+        }
+        
         .slide-4.active .bar {
             animation: growBar 1s ease-out forwards;
         }
@@ -483,6 +495,14 @@
         
         .slide-3.autoplay {
             animation: slide3 20s infinite;
+        }
+        
+        .slide-4.autoplay {
+            animation: slide4 20s infinite;
+        }
+        
+        .slide-5.autoplay {
+            animation: slide5 20s infinite;
         }
         
         .slide-4.autoplay {
@@ -704,6 +724,7 @@
         let isAutoPlaying = false;
 
         function showSlide(index) {
+            console.log('Showing slide:', index);
             slides.forEach((slide, i) => {
                 slide.classList.toggle('active', i === index);
             });
