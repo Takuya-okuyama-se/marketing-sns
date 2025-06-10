@@ -351,7 +351,6 @@
             position: relative;
             margin-bottom: 20px;
             transition: all 0.5s;
-            animation: growBar 1s ease-out forwards;
         }
 
         @keyframes growBar {
@@ -359,10 +358,20 @@
             to { height: var(--bar-height); }
         }
 
-        .bar-1 { --bar-height: 180px; animation-delay: 0.2s; }
-        .bar-2 { --bar-height: 230px; animation-delay: 0.4s; }
-        .bar-3 { --bar-height: 290px; animation-delay: 0.6s; }
-        .bar-4 { --bar-height: 350px; animation-delay: 0.8s; }
+        .bar-1 { --bar-height: 180px; }
+        .bar-2 { --bar-height: 230px; }
+        .bar-3 { --bar-height: 290px; }
+        .bar-4 { --bar-height: 350px; }
+        
+        /* スライド4がアクティブな時のみバーアニメーションを実行 */
+        .slide-4.active .bar {
+            animation: growBar 1s ease-out forwards;
+        }
+        
+        .slide-4.active .bar-1 { animation-delay: 0.2s; }
+        .slide-4.active .bar-2 { animation-delay: 0.4s; }
+        .slide-4.active .bar-3 { animation-delay: 0.6s; }
+        .slide-4.active .bar-4 { animation-delay: 0.8s; }
 
         .bar-value {
             position: absolute;
@@ -519,6 +528,11 @@
             left: 0;
             height: 8px;
             background: linear-gradient(to right, #e74c3c, #c0392b);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        
+        .progress.autoplay {
             animation: progress 20s linear infinite;
         }
 
@@ -628,25 +642,25 @@
             <div class="chart-container">
                 <div class="chart">
                     <div class="bar-group">
-                        <div class="bar bar-1" style="height: 180px;">
+                        <div class="bar bar-1">
                             <div class="bar-value">45点</div>
                         </div>
                         <div class="bar-label">初回</div>
                     </div>
                     <div class="bar-group">
-                        <div class="bar bar-2" style="height: 230px;">
+                        <div class="bar bar-2">
                             <div class="bar-value">52点</div>
                         </div>
                         <div class="bar-label">3ヶ月後</div>
                     </div>
                     <div class="bar-group">
-                        <div class="bar bar-3" style="height: 290px;">
+                        <div class="bar bar-3">
                             <div class="bar-value">63点</div>
                         </div>
                         <div class="bar-label">6ヶ月後</div>
                     </div>
                     <div class="bar-group">
-                        <div class="bar bar-4" style="height: 350px;">
+                        <div class="bar bar-4">
                             <div class="bar-value">71点</div>
                         </div>
                         <div class="bar-label">9ヶ月後</div>
@@ -680,7 +694,7 @@
         </div>
 
         <!-- プログレスバー -->
-        <div class="progress"></div>
+        <div class="progress" id="progressBar"></div>
     </div>
 
     <script>
@@ -693,6 +707,15 @@
             slides.forEach((slide, i) => {
                 slide.classList.toggle('active', i === index);
             });
+            
+            // プログレスバーをマニュアルモードで更新
+            if (!isAutoPlaying) {
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar) {
+                    const progressPercentage = (index / (slides.length - 1)) * 100;
+                    progressBar.style.width = progressPercentage + '%';
+                }
+            }
         }
 
         // 自動再生機能
@@ -711,6 +734,12 @@
             slides.forEach(slide => {
                 slide.classList.add('autoplay');
             });
+            
+            // プログレスバーにもアニメーションクラスを追加
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.classList.add('autoplay');
+            }
             
             // 各スライドの表示時間（合計20秒）
             const slideDurations = [4000, 4000, 4000, 4000, 4000];
@@ -752,6 +781,12 @@
             slides.forEach(slide => {
                 slide.classList.remove('autoplay');
             });
+            
+            // プログレスバーのアニメーションも削除
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.classList.remove('autoplay');
+            }
         }
 
         // 手動操作
