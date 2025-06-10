@@ -30,22 +30,20 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.2);
         }
 
-        /* スライド共通 */
+        /* スライド共通スタイル */
         .slide {
             position: absolute;
             width: 100%;
             height: 100%;
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 80px;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
         }
 
         .slide.active {
-            opacity: 1;
+            display: flex;
         }
 
         /* 講師アイコン */
@@ -83,6 +81,11 @@
         }
 
         @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
@@ -235,11 +238,6 @@
             margin-top: 20px;
         }
 
-        .data-emoji {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
         /* スライド3: 重要ポイント */
         .slide-3 {
             background: white;
@@ -351,39 +349,12 @@
             position: relative;
             margin-bottom: 20px;
             transition: all 0.5s;
-            height: var(--bar-height);
         }
 
-        @keyframes growBar {
-            from { 
-                height: 0;
-                opacity: 0;
-            }
-            to { 
-                height: var(--bar-height);
-                opacity: 1;
-            }
-        }
-
-        .bar-1 { --bar-height: 180px; }
-        .bar-2 { --bar-height: 230px; }
-        .bar-3 { --bar-height: 290px; }
-        .bar-4 { --bar-height: 350px; }
-        
-        /* スライド4がアクティブな時のみバーアニメーションを実行 */
-        .slide-4 .bar {
-            height: 0;
-            opacity: 0;
-        }
-        
-        .slide-4.active .bar {
-            animation: growBar 1s ease-out forwards;
-        }
-        
-        .slide-4.active .bar-1 { animation-delay: 0.2s; }
-        .slide-4.active .bar-2 { animation-delay: 0.4s; }
-        .slide-4.active .bar-3 { animation-delay: 0.6s; }
-        .slide-4.active .bar-4 { animation-delay: 0.8s; }
+        .bar-1 { height: 180px; }
+        .bar-2 { height: 230px; }
+        .bar-3 { height: 290px; }
+        .bar-4 { height: 350px; }
 
         .bar-value {
             position: absolute;
@@ -484,55 +455,6 @@
             50% { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
         }
 
-        /* アニメーションタイミング */
-        .slide-1.autoplay {
-            animation: slide1 20s infinite;
-        }
-        
-        .slide-2.autoplay {
-            animation: slide2 20s infinite;
-        }
-        
-        .slide-3.autoplay {
-            animation: slide3 20s infinite;
-        }
-        
-        .slide-4.autoplay {
-            animation: slide4 20s infinite;
-        }
-        
-        .slide-5.autoplay {
-            animation: slide5 20s infinite;
-        }
-        
-        @keyframes slide1 {
-            0%, 20% { opacity: 1; }
-            21%, 100% { opacity: 0; }
-        }
-
-        @keyframes slide2 {
-            0%, 19% { opacity: 0; }
-            20%, 40% { opacity: 1; }
-            41%, 100% { opacity: 0; }
-        }
-
-        @keyframes slide3 {
-            0%, 39% { opacity: 0; }
-            40%, 60% { opacity: 1; }
-            61%, 100% { opacity: 0; }
-        }
-
-        @keyframes slide4 {
-            0%, 59% { opacity: 0; }
-            60%, 80% { opacity: 1; }
-            81%, 100% { opacity: 0; }
-        }
-
-        @keyframes slide5 {
-            0%, 79% { opacity: 0; }
-            80%, 100% { opacity: 1; }
-        }
-
         /* プログレスバー */
         .progress {
             position: absolute;
@@ -543,30 +465,56 @@
             width: 0;
             transition: width 0.3s ease;
         }
-        
-        .progress.autoplay {
-            animation: progress 20s linear infinite;
-        }
 
-        @keyframes progress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        /* 装飾的な要素 */
-        /* 背景装飾用の追加キャラクター */
-        .bg-character {
+        /* ナビゲーションボタン */
+        .nav-buttons {
             position: absolute;
-            opacity: 0.15;
-            animation: float 20s ease-in-out infinite;
-            z-index: 1;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .nav-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
         }
 
+        .nav-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #e74c3c;
+            transform: scale(1.3);
+        }
     </style>
 </head>
 <body>
@@ -648,7 +596,7 @@
         </div>
 
         <!-- スライド4: 成長グラフ -->
-        <div class="slide slide-4" style="opacity: 0; position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 80px; background: #f4f6f7; transition: opacity 0.8s ease-in-out;">
+        <div class="slide slide-4">
             <img src="images/1.png" class="character-medium" style="position: absolute; top: 40px; left: 40px;" alt="成長する生徒たち">
             <h2 class="growth-header">難しい模試でも着実に成長！</h2>
             <div class="chart-container">
@@ -688,7 +636,7 @@
         </div>
 
         <!-- スライド5: まとめ -->
-        <div class="slide slide-5" style="opacity: 0; position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 80px; background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); color: white; transition: opacity 0.8s ease-in-out;">
+        <div class="slide slide-5">
             <img src="images/10.png" class="character-large" style="position: absolute; bottom: 50px; right: 50%; transform: translateX(50%); z-index: 5;" alt="まとめ先生">
             <h2 class="action-header">今すぐ実践しよう！</h2>
             <div class="action-box">
@@ -707,114 +655,81 @@
 
         <!-- プログレスバー -->
         <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
     </div>
 
     <script>
-        // スライドショーの制御
         const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
         let currentSlide = 0;
-        let isAutoPlaying = false;
+        let autoPlayInterval = null;
 
         function showSlide(index) {
-            console.log('Showing slide:', index);
             slides.forEach((slide, i) => {
                 slide.classList.toggle('active', i === index);
-                // インラインスタイルでopacityを直接制御
-                if (slide.classList.contains('slide-4') || slide.classList.contains('slide-5')) {
-                    slide.style.opacity = i === index ? '1' : '0';
-                }
             });
             
-            // プログレスバーをマニュアルモードで更新
-            if (!isAutoPlaying) {
-                const progressBar = document.getElementById('progressBar');
-                if (progressBar) {
-                    const progressPercentage = (index / (slides.length - 1)) * 100;
-                    progressBar.style.width = progressPercentage + '%';
-                }
-            }
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            currentSlide = index;
+            updateProgressBar();
         }
 
-        // 自動再生機能
-        let autoPlayTimeouts = [];
-        let autoPlayInterval = null;
-        
-        function startAutoPlay() {
-            // すべてのタイムアウトをクリア
-            stopAutoPlay();
-            
-            isAutoPlaying = true;
-            currentSlide = 0;
-            showSlide(currentSlide);
-            
-            // アニメーションクラスを追加
-            slides.forEach(slide => {
-                slide.classList.add('autoplay');
-            });
-            
-            // プログレスバーにもアニメーションクラスを追加
-            const progressBar = document.getElementById('progressBar');
-            if (progressBar) {
-                progressBar.classList.add('autoplay');
-            }
-            
-            // 各スライドの表示時間（合計20秒）
-            const slideDurations = [4000, 4000, 4000, 4000, 4000];
-            let totalTime = 0;
-            
-            slideDurations.forEach((duration, index) => {
-                if (index > 0) {
-                    const timeout = setTimeout(() => {
-                        currentSlide = index;
-                        showSlide(currentSlide);
-                        // 親ウィンドウに現在のスライドを通知
-                        if (window.parent !== window) {
-                            window.parent.postMessage({
-                                action: 'slideChanged',
-                                slideIndex: currentSlide
-                            }, '*');
-                        }
-                    }, totalTime);
-                    autoPlayTimeouts.push(timeout);
-                }
-                totalTime += duration;
-            });
-            
-            // 20秒後に最初に戻る
-            autoPlayInterval = setInterval(() => {
-                startAutoPlay();
-            }, 20000);
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
         }
-        
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 4000);
+        }
+
         function stopAutoPlay() {
-            isAutoPlaying = false;
-            autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
-            autoPlayTimeouts = [];
             if (autoPlayInterval) {
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = null;
             }
-            // アニメーションクラスを削除
-            slides.forEach(slide => {
-                slide.classList.remove('autoplay');
-            });
-            
-            // プログレスバーのアニメーションも削除
-            const progressBar = document.getElementById('progressBar');
-            if (progressBar) {
-                progressBar.classList.remove('autoplay');
-            }
         }
 
-        // 手動操作
+        // キーボード操作
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight') {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
+                stopAutoPlay();
+                nextSlide();
             } else if (e.key === 'ArrowLeft') {
-                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(currentSlide);
+                stopAutoPlay();
+                previousSlide();
             } else if (e.key === ' ') {
+                e.preventDefault();
                 startAutoPlay();
             }
         });
@@ -827,16 +742,14 @@
                 stopAutoPlay();
             } else if (event.data.action === 'reset') {
                 stopAutoPlay();
-                currentSlide = 0;
-                showSlide(currentSlide);
+                showSlide(0);
             } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
                 stopAutoPlay();
-                currentSlide = event.data.slideIndex;
-                showSlide(currentSlide);
+                showSlide(event.data.slideIndex);
             }
         });
 
-        // アニメーションの開始
+        // 初期表示
         showSlide(0);
     </script>
 </body>
