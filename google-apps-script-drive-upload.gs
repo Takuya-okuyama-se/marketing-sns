@@ -13,10 +13,10 @@ function doPost(e) {
     const blob = Utilities.newBlob(Utilities.base64Decode(fileData), mimeType, fileName);
     
     // Google Driveの特定のフォルダに保存（フォルダIDを設定してください）
-    const folderId = 'YOUR_FOLDER_ID_HERE'; // ここにGoogle DriveのフォルダIDを入力
+    const folderId = '1yrLqAXQuO83R2weHHffr-LAnFvMs2A8o'; // ここにGoogle DriveのフォルダIDを入力
     let folder;
     
-    if (folderId && folderId !== 'YOUR_FOLDER_ID_HERE') {
+    if (folderId) {
       folder = DriveApp.getFolderById(folderId);
     } else {
       // フォルダIDが設定されていない場合はルートに保存
