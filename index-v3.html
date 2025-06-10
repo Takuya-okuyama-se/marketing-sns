@@ -1241,6 +1241,7 @@
         
         // 動画自動生成機能
         let generatedVideoDataUrl = '';
+        let generatedVideoBlob = null;
         
         async function autoGenerateVideo() {
             const videoSelect = document.getElementById('tipsVideoSelect');
@@ -1285,10 +1286,13 @@
                 }
             };
             
-            mediaRecorder.onstop = () => {
+            mediaRecorder.onstop = async () => {
                 const blob = new Blob(chunks, { type: 'video/webm' });
+                generatedVideoBlob = blob;
+                
+                // Data URLも生成（プレビュー用）
                 const reader = new FileReader();
-                reader.onloadend = () => {
+                reader.onloadend = async () => {
                     generatedVideoDataUrl = reader.result;
                     
                     // プレビュー表示
@@ -1297,6 +1301,15 @@
                     
                     document.getElementById('videoGenerationStatus').style.display = 'none';
                     document.getElementById('generatedVideoContainer').style.display = 'block';
+                    
+                    // Google Driveに自動アップロード
+                    updateGenerationStatus('Google Driveにアップロード中...', 95);
+                    try {
+                        await uploadToGoogleDrive(blob, videoSelect.value);
+                    } catch (error) {
+                        console.error('アップロードエラー:', error);
+                        alert('Google Driveへの自動アップロードに失敗しました。手動でアップロードしてください。');
+                    }
                 };
                 reader.readAsDataURL(blob);
             };
@@ -1372,11 +1385,81 @@
                 return;
             }
             
-            // 画像URL欄に動画データURLを設定
-            document.getElementById('imageUrl').value = generatedVideoDataUrl.substring(0, 100) + '...';
-            document.getElementById('imageUrl').setAttribute('data-full-url', generatedVideoDataUrl);
+            // Google DriveのURLが設定されている場合は優先
+            const driveUrl = document.getElementById('imageUrl').getAttribute('data-drive-url');
+            if (driveUrl) {
+                document.getElementById('imageUrl').value = driveUrl;
+                alert('Google Driveの動画URLが設定されました！');
+            } else {
+                // フォールバック: Data URLを使用
+                document.getElementById('imageUrl').value = generatedVideoDataUrl.substring(0, 100) + '...';
+                document.getElementById('imageUrl').setAttribute('data-full-url', generatedVideoDataUrl);
+                alert('動画が設定されました！\n※ データURLが長いため、表示は省略されています。');
+            }
+        }
+        
+        // Google Driveアップロード機能
+        async function uploadToGoogleDrive(blob, videoType) {
+            // Google Drive APIを使用するには認証が必要
+            // 現在のセットアップではクライアントサイドから直接アップロードはセキュリティ上推奨されない
+            // 代替案として、サーバーレス関数（Netlify Functions等）を使用
             
-            alert('動画が設定されました！\n※ データURLが長いため、表示は省略されています。');
+            // 簡易実装: Google Apps Scriptを使用
+            const fileName = `${videoType}-${new Date().getTime()}.webm`;
+            
+            // Google Apps Script Web App URL（要設定）
+            const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+            
+            if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+                console.log('Google Apps Script URLが設定されていません');
+                // 代わりにダウンロードリンクを提供
+                const downloadUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName;
+                
+                updateGenerationStatus('自動アップロードは設定されていません。動画をダウンロードしてください。', 100);
+                
+                // ダウンロードボタンを表示
+                setTimeout(() => {
+                    if (confirm('動画が生成されました。ダウンロードしますか？')) {
+                        a.click();
+                    }
+                }, 1000);
+                return;
+            }
+            
+            // Base64エンコード
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64 = reader.result.split(',')[1];
+                
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            fileName: fileName,
+                            fileData: base64,
+                            mimeType: 'video/webm'
+                        })
+                    });
+                    
+                    // Google DriveのURLを取得できた場合
+                    const result = await response.json();
+                    if (result.fileUrl) {
+                        document.getElementById('imageUrl').value = result.fileUrl;
+                        document.getElementById('imageUrl').setAttribute('data-drive-url', result.fileUrl);
+                        updateGenerationStatus('Google Driveへのアップロード完了！', 100);
+                    }
+                } catch (error) {
+                    console.error('アップロードエラー:', error);
+                }
+            };
+            reader.readAsDataURL(blob);
         }
         
         function viewSlideshow() {
