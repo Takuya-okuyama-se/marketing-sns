@@ -600,6 +600,14 @@
         // 初期化
         updateSlideIndicator();
         
+        // スライドショーからのメッセージを受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'slideChanged' && event.data.slideIndex !== undefined) {
+                currentSlide = event.data.slideIndex;
+                updateSlideIndicator();
+            }
+        });
+        
         // ページ離脱時の処理
         window.addEventListener('beforeunload', () => {
             if (isRecording) {

@@ -91,7 +91,6 @@
         .slide-1 {
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
-            animation: slide1 20s infinite;
         }
 
         .main-title {
@@ -133,7 +132,6 @@
         /* スライド2: データ比較 */
         .slide-2 {
             background: #ecf0f1;
-            animation: slide2 20s infinite;
         }
 
         .comparison-header {
@@ -245,7 +243,6 @@
         /* スライド3: 重要ポイント */
         .slide-3 {
             background: white;
-            animation: slide3 20s infinite;
             position: relative;
         }
 
@@ -309,7 +306,6 @@
         /* スライド4: グラフ */
         .slide-4 {
             background: #f4f6f7;
-            animation: slide4 20s infinite;
         }
 
         .growth-header {
@@ -410,7 +406,6 @@
         .slide-5 {
             background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
             color: white;
-            animation: slide5 20s infinite;
         }
 
         .action-header {
@@ -469,6 +464,26 @@
         }
 
         /* アニメーションタイミング */
+        .slide-1.autoplay {
+            animation: slide1 20s infinite;
+        }
+        
+        .slide-2.autoplay {
+            animation: slide2 20s infinite;
+        }
+        
+        .slide-3.autoplay {
+            animation: slide3 20s infinite;
+        }
+        
+        .slide-4.autoplay {
+            animation: slide4 20s infinite;
+        }
+        
+        .slide-5.autoplay {
+            animation: slide5 20s infinite;
+        }
+        
         @keyframes slide1 {
             0%, 20% { opacity: 1; }
             21%, 100% { opacity: 0; }
@@ -574,7 +589,6 @@
 
         <!-- スライド3: 重要ポイント -->
         <div class="slide slide-3">
-            <img src="images/8.png" class="character-medium" style="position: absolute; top: 40px; right: 40px; z-index: 5;" alt="魔法使い先生">
             <h2 class="points-header">押さえておきたい3つのポイント</h2>
             <div class="key-points">
                 <div class="point-item">
@@ -673,6 +687,7 @@
         // スライドショーの制御
         const slides = document.querySelectorAll('.slide');
         let currentSlide = 0;
+        let isAutoPlaying = false;
 
         function showSlide(index) {
             slides.forEach((slide, i) => {
@@ -682,14 +697,20 @@
 
         // 自動再生機能
         let autoPlayTimeouts = [];
+        let autoPlayInterval = null;
         
         function startAutoPlay() {
             // すべてのタイムアウトをクリア
-            autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
-            autoPlayTimeouts = [];
+            stopAutoPlay();
             
+            isAutoPlaying = true;
             currentSlide = 0;
             showSlide(currentSlide);
+            
+            // アニメーションクラスを追加
+            slides.forEach(slide => {
+                slide.classList.add('autoplay');
+            });
             
             // 各スライドの表示時間（合計20秒）
             const slideDurations = [4000, 4000, 4000, 4000, 4000];
@@ -700,10 +721,36 @@
                     const timeout = setTimeout(() => {
                         currentSlide = index;
                         showSlide(currentSlide);
+                        // 親ウィンドウに現在のスライドを通知
+                        if (window.parent !== window) {
+                            window.parent.postMessage({
+                                action: 'slideChanged',
+                                slideIndex: currentSlide
+                            }, '*');
+                        }
                     }, totalTime);
                     autoPlayTimeouts.push(timeout);
                 }
                 totalTime += duration;
+            });
+            
+            // 20秒後に最初に戻る
+            autoPlayInterval = setInterval(() => {
+                startAutoPlay();
+            }, 20000);
+        }
+        
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+            autoPlayTimeouts = [];
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+            // アニメーションクラスを削除
+            slides.forEach(slide => {
+                slide.classList.remove('autoplay');
             });
         }
 
@@ -724,12 +771,14 @@
         window.addEventListener('message', (event) => {
             if (event.data.action === 'startAutoPlay') {
                 startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
             } else if (event.data.action === 'reset') {
-                autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+                stopAutoPlay();
                 currentSlide = 0;
                 showSlide(currentSlide);
             } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
-                autoPlayTimeouts.forEach(timeout => clearTimeout(timeout));
+                stopAutoPlay();
                 currentSlide = event.data.slideIndex;
                 showSlide(currentSlide);
             }
