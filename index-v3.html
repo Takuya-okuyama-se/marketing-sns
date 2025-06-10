@@ -402,6 +402,16 @@
             color: #999;
         }
         
+        /* Tips動画セクション */
+        #videoPreviewContainer {
+            text-align: center;
+        }
+        
+        #videoPreview {
+            max-width: 100%;
+            height: auto;
+        }
+        
         /* レスポンシブ */
         @media (max-width: 768px) {
             .modal-content {
@@ -414,6 +424,10 @@
             }
             .status-bar {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            #videoPreview {
+                width: 100%;
+                height: 300px;
             }
         }
     </style>
@@ -566,14 +580,45 @@
             </div>
             
             <div class="image-section">
-                <h3>📷 画像設定</h3>
+                <h3>📷 画像・動画設定</h3>
                 <div class="form-group">
-                    <label>Google Drive画像URL</label>
-                    <input type="text" id="imageUrl" placeholder="https://drive.google.com/file/d/..." onchange="previewImage()">
-                    <small>※ Google Driveの共有リンクを貼り付けてください</small>
+                    <label>メディアタイプ</label>
+                    <select id="mediaType" onchange="toggleMediaOptions()">
+                        <option value="image">画像</option>
+                        <option value="tips-video">マーケティングTips動画</option>
+                    </select>
                 </div>
-                <img id="imagePreview" class="image-preview" alt="プレビュー" style="max-width: 300px; margin-top: 10px; display: none;">
-                <button class="btn" onclick="openGoogleDrive()">Google Driveを開く</button>
+                
+                <!-- 画像選択セクション -->
+                <div id="imageSection">
+                    <div class="form-group">
+                        <label>Google Drive画像URL</label>
+                        <input type="text" id="imageUrl" placeholder="https://drive.google.com/file/d/..." onchange="previewImage()">
+                        <small>※ Google Driveの共有リンクを貼り付けてください</small>
+                    </div>
+                    <img id="imagePreview" class="image-preview" alt="プレビュー" style="max-width: 300px; margin-top: 10px; display: none;">
+                    <button class="btn" onclick="openGoogleDrive()">Google Driveを開く</button>
+                </div>
+                
+                <!-- Tips動画選択セクション -->
+                <div id="tipsVideoSection" style="display: none;">
+                    <div class="form-group">
+                        <label>Tips動画を選択</label>
+                        <select id="tipsVideoSelect" onchange="updateVideoPreview()">
+                            <option value="">選択してください</option>
+                            <option value="juku-data-tips">塾講師が教える「データの正しい見方」</option>
+                            <option value="sns-tips">SNS投稿 完全攻略ガイド</option>
+                        </select>
+                    </div>
+                    <div id="videoPreviewContainer" style="margin-top: 15px; display: none;">
+                        <iframe id="videoPreview" width="400" height="400" style="border: 2px solid #ddd; border-radius: 10px;"></iframe>
+                        <div style="margin-top: 10px;">
+                            <button class="btn" onclick="recordVideo()">🎥 動画を録画</button>
+                            <button class="btn" onclick="viewSlideshow()">👁️ スライドを確認</button>
+                        </div>
+                        <small style="display: block; margin-top: 10px; color: #666;">※ 録画した動画はGoogle Driveに保存してURLを設定してください</small>
+                    </div>
+                </div>
             </div>
             
             <div class="form-group">
@@ -1141,6 +1186,81 @@
         window.onclick = function(event) {
             if (event.target.className === 'modal') {
                 event.target.style.display = 'none';
+            }
+        }
+        
+        // Tips動画関連の関数
+        function toggleMediaOptions() {
+            const mediaType = document.getElementById('mediaType').value;
+            const imageSection = document.getElementById('imageSection');
+            const tipsVideoSection = document.getElementById('tipsVideoSection');
+            
+            if (mediaType === 'image') {
+                imageSection.style.display = 'block';
+                tipsVideoSection.style.display = 'none';
+            } else {
+                imageSection.style.display = 'none';
+                tipsVideoSection.style.display = 'block';
+            }
+        }
+        
+        function updateVideoPreview() {
+            const videoSelect = document.getElementById('tipsVideoSelect');
+            const previewContainer = document.getElementById('videoPreviewContainer');
+            const videoPreview = document.getElementById('videoPreview');
+            
+            if (videoSelect.value) {
+                previewContainer.style.display = 'block';
+                
+                // スライドショーのURLを設定
+                const videoUrls = {
+                    'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
+                    'sns-tips': 'sns-tips-slideshow.html'
+                };
+                
+                videoPreview.src = videoUrls[videoSelect.value] || '';
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+        
+        function recordVideo() {
+            const videoSelect = document.getElementById('tipsVideoSelect');
+            
+            if (!videoSelect.value) {
+                alert('動画を選択してください');
+                return;
+            }
+            
+            // 録画ページへのURLマッピング
+            const recorderUrls = {
+                'juku-data-tips': 'juku-video-recorder.html',
+                'sns-tips': 'video-recorder.html'
+            };
+            
+            const recorderUrl = recorderUrls[videoSelect.value];
+            if (recorderUrl) {
+                window.open(recorderUrl, '_blank');
+            }
+        }
+        
+        function viewSlideshow() {
+            const videoSelect = document.getElementById('tipsVideoSelect');
+            
+            if (!videoSelect.value) {
+                alert('動画を選択してください');
+                return;
+            }
+            
+            // スライドショーページへのURLマッピング
+            const slideshowUrls = {
+                'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
+                'sns-tips': 'sns-tips-slideshow.html'
+            };
+            
+            const slideshowUrl = slideshowUrls[videoSelect.value];
+            if (slideshowUrl) {
+                window.open(slideshowUrl, '_blank');
             }
         }
     </script>
