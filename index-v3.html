@@ -1408,9 +1408,9 @@
             const fileName = `${videoType}-${new Date().getTime()}.webm`;
             
             // Google Apps Script Web App URL（要設定）
-            const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+            const GAS_URL = 'https://script.google.com/macros/s/AKfycbysLmIwh2XnLCWLrz5pA1184StBgoZtR7F31mVXn2EqRhKDjrfTbAPHP_JPppLhTxBe/exec';
             
-            if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            if (!GAS_URL || GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                 console.log('Google Apps Script URLが設定されていません');
                 // 代わりにダウンロードリンクを提供
                 const downloadUrl = URL.createObjectURL(blob);
