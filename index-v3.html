@@ -613,8 +613,8 @@
                     <div id="videoPreviewContainer" style="margin-top: 15px; display: none;">
                         <iframe id="videoPreview" width="400" height="400" style="border: 2px solid #ddd; border-radius: 10px;"></iframe>
                         <div style="margin-top: 10px;">
-                            <button class="btn btn-primary" onclick="autoGenerateVideo()">🎬 動画を自動生成</button>
                             <button class="btn" onclick="viewSlideshow()">👁️ スライドを確認</button>
+                            <button class="btn btn-primary" onclick="openRecordingGuide()">📹 録画ガイドを開く</button>
                         </div>
                         <div id="videoGenerationStatus" style="display: none; margin-top: 15px;">
                             <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 15px;">
@@ -1539,6 +1539,10 @@
             if (slideshowUrl) {
                 window.open(slideshowUrl, '_blank');
             }
+        }
+        
+        function openRecordingGuide() {
+            window.open('manual-recording-guide.html', '_blank');
         }
     </script>
 </body>
