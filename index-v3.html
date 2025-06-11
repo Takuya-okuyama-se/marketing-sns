@@ -608,6 +608,7 @@
                             <option value="">選択してください</option>
                             <option value="juku-data-tips">塾講師が教える「データの正しい見方」</option>
                             <option value="sns-tips">SNS投稿 完全攻略ガイド</option>
+                            <option value="naishintips-chu1">内申点の考え方【中1編】英語の重要性</option>
                         </select>
                     </div>
                     <div id="videoPreviewContainer" style="margin-top: 15px; display: none;">
@@ -1230,7 +1231,8 @@
                 // スライドショーのURLを設定
                 const videoUrls = {
                     'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
-                    'sns-tips': 'sns-tips-slideshow.html'
+                    'sns-tips': 'sns-tips-slideshow.html',
+                    'naishintips-chu1': 'naishintips-chu1-slideshow.html'
                 };
                 
                 videoPreview.src = videoUrls[videoSelect.value] || '';
@@ -1532,7 +1534,8 @@
             // スライドショーページへのURLマッピング
             const slideshowUrls = {
                 'juku-data-tips': 'juku-data-tips-slideshow-fixed.html',
-                'sns-tips': 'sns-tips-slideshow.html'
+                'sns-tips': 'sns-tips-slideshow.html',
+                'naishintips-chu1': 'naishintips-chu1-slideshow.html'
             };
             
             const slideshowUrl = slideshowUrls[videoSelect.value];
