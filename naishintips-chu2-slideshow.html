@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内申点に関しての考え方、中2編</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* キャラクター画像共通 */
+        .character-img {
+            width: 180px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* スライド1: タイトル */
+        .slide-1 {
+            background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+            color: white;
+        }
+
+        .main-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.3;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 32px;
+            opacity: 0.9;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .highlight-box {
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .highlight-text {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* スライド2: 得意科目と苦手科目 */
+        .slide-2 {
+            background: #ffffff;
+        }
+
+        .section-header {
+            font-size: 52px;
+            font-weight: 700;
+            color: #f39c12;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 5px;
+            background: #3498db;
+            border-radius: 3px;
+        }
+
+        .subject-balance {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 900px;
+        }
+
+        .subject-card {
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .good-subject {
+            border: 3px solid #27ae60;
+        }
+
+        .weak-subject {
+            border: 3px solid #e74c3c;
+        }
+
+        .subject-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .subject-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .good-subject .subject-title {
+            color: #27ae60;
+        }
+
+        .weak-subject .subject-title {
+            color: #e74c3c;
+        }
+
+        .subject-desc {
+            font-size: 24px;
+            color: #5d6d7e;
+            line-height: 1.5;
+        }
+
+        /* スライド3: 精神的な不安定期 */
+        .slide-3 {
+            background: linear-gradient(135deg, #5d6d7e 0%, #34495e 100%);
+            color: white;
+        }
+
+        .mental-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .mental-box {
+            background: rgba(255,255,255,0.15);
+            border-radius: 25px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            max-width: 850px;
+            text-align: center;
+        }
+
+        .mental-point {
+            font-size: 36px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .pillar-emphasis {
+            background: rgba(241, 196, 15, 0.3);
+            border: 3px solid #f1c40f;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* スライド4: 戦略 */
+        .slide-4 {
+            background: #ffffff;
+        }
+
+        .strategy-flow {
+            max-width: 900px;
+        }
+
+        .flow-item {
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .flow-number {
+            background: #f39c12;
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .flow-content {
+            flex: 1;
+        }
+
+        .flow-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .flow-desc {
+            font-size: 24px;
+            color: #5d6d7e;
+            line-height: 1.4;
+        }
+
+        /* スライド5: まとめ・行動喚起 */
+        .slide-5 {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .action-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .summary-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            max-width: 850px;
+        }
+
+        .key-message {
+            font-size: 36px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cta-button {
+            background: #f39c12;
+            padding: 25px 60px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3);
+            animation: glow 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(243, 156, 18, 0.5); }
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #f39c12, #e67e22);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* ナビゲーション */
+        .nav-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #f39c12;
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active">
+            <img src="images/8.png" class="character-img" style="position: absolute; top: 60px; right: 60px;" alt="先生キャラクター">
+            <h1 class="main-title">
+                内申点に関しての<br>
+                考え方【中2編】
+            </h1>
+            <p class="subtitle">
+                学年によって内申点の取り方で<br>
+                意識する部分が異なります！
+            </p>
+            <div class="highlight-box">
+                <p class="highlight-text">
+                    大切なのは、耐える意識！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: 得意科目と苦手科目 -->
+        <div class="slide slide-2">
+            <h2 class="section-header">得意科目の有無と苦手科目の把握</h2>
+            <div class="subject-balance">
+                <div class="subject-card good-subject">
+                    <div class="subject-icon">💪</div>
+                    <h3 class="subject-title">得意科目</h3>
+                    <p class="subject-desc">
+                        勉強を続ける<br>
+                        心の柱になる
+                    </p>
+                </div>
+                <div class="subject-card weak-subject">
+                    <div class="subject-icon">🛡️</div>
+                    <h3 class="subject-title">苦手科目</h3>
+                    <p class="subject-desc">
+                        しっかり把握して<br>
+                        耐えていく
+                    </p>
+                </div>
+            </div>
+            <img src="images/15.png" class="character-img" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 150px;" alt="バランスキャラクター">
+        </div>
+
+        <!-- スライド3: 精神的な不安定期 -->
+        <div class="slide slide-3">
+            <h2 class="mental-header">中2は精神的に不安定な時期</h2>
+            <div class="mental-box">
+                <p class="mental-point">
+                    勉強へのモチベーション維持が<br>
+                    最も難しい学年
+                </p>
+                <div class="pillar-emphasis">
+                    <p>だからこそ<br>
+                    「軸となる科目」が必要！</p>
+                </div>
+                <p style="font-size: 28px; margin-top: 30px; opacity: 0.9;">
+                    得意科目が精神的な支えになる
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド4: 戦略 -->
+        <div class="slide slide-4">
+            <h2 class="section-header">中2の内申点戦略</h2>
+            <div class="strategy-flow">
+                <div class="flow-item">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <h3 class="flow-title">軸となる得意科目をつくる</h3>
+                        <p class="flow-desc">モチベーションの源泉に</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <h3 class="flow-title">苦手科目は「耐える」</h3>
+                        <p class="flow-desc">完璧を求めず、最低限をキープ</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <h3 class="flow-title">バランスを保ちながら進む</h3>
+                        <p class="flow-desc">無理せず継続することが大切</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: まとめ -->
+        <div class="slide slide-5">
+            <img src="images/6.png" class="character-img" style="position: absolute; top: 50px; left: 50%; transform: translateX(-50%); width: 220px;" alt="まとめ先生">
+            <h2 class="action-header">中2を乗り切る秘訣</h2>
+            <div class="summary-box">
+                <p class="key-message">
+                    得意科目を心の柱に<br>
+                    苦手科目は耐えながら<br>
+                    <br>
+                    不安定な時期だからこそ<br>
+                    バランスを大切に進もう！
+                </p>
+                <div class="cta-button">
+                    今日から実践！
+                </div>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            currentSlide = index;
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 4000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                stopAutoPlay();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                stopAutoPlay();
+                previousSlide();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'reset') {
+                stopAutoPlay();
+                showSlide(0);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                stopAutoPlay();
+                showSlide(event.data.slideIndex);
+            }
+        });
+
+        // URLパラメータで自動再生
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('autoplay') === 'true') {
+            startAutoPlay();
+        }
+
+        // 初期表示
+        showSlide(0);
+    </script>
+</body>
+</html>
