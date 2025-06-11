@@ -466,6 +466,35 @@
             transition: width 0.3s ease;
         }
 
+        /* 保存推奨 */
+        .save-recommendation {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            animation: gentle-pulse 3s ease-in-out infinite;
+            color: white;
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
+        }
+
+        .save-icon {
+            font-size: 24px;
+        }
+
         /* ナビゲーションボタン */
         .nav-buttons {
             position: absolute;
@@ -650,6 +679,10 @@
                     厳しいデータが<br>
                     確実な成長への第一歩！
                 </div>
+            </div>
+            <div class="save-recommendation">
+                <span class="save-icon">📑</span>
+                <span>保存して何度でも確認</span>
             </div>
         </div>
 
