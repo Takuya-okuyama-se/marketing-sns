@@ -1481,11 +1481,11 @@
                 const base64 = reader.result.split(',')[1];
                 
                 try {
+                    // no-corsモードではレスポンスが読めないため、別の方法を使用
                     const response = await fetch(GAS_URL, {
                         method: 'POST',
-                        mode: 'no-cors',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'text/plain',
                         },
                         body: JSON.stringify({
                             fileName: fileName,
@@ -1494,15 +1494,28 @@
                         })
                     });
                     
-                    // Google DriveのURLを取得できた場合
-                    const result = await response.json();
-                    if (result.fileUrl) {
-                        document.getElementById('imageUrl').value = result.fileUrl;
-                        document.getElementById('imageUrl').setAttribute('data-drive-url', result.fileUrl);
-                        updateGenerationStatus('Google Driveへのアップロード完了！', 100);
+                    // レスポンスを読み取る
+                    if (response.ok) {
+                        try {
+                            const result = await response.json();
+                            if (result.success && result.fileUrl) {
+                                document.getElementById('imageUrl').value = result.fileUrl;
+                                document.getElementById('imageUrl').setAttribute('data-drive-url', result.fileUrl);
+                                updateGenerationStatus('Google Driveへのアップロード完了！', 100);
+                                alert('動画がGoogle Driveにアップロードされました！');
+                            } else {
+                                throw new Error('アップロード失敗');
+                            }
+                        } catch (parseError) {
+                            console.error('レスポンス解析エラー:', parseError);
+                            updateGenerationStatus('アップロード完了（確認してください）', 100);
+                        }
+                    } else {
+                        throw new Error('アップロードエラー');
                     }
                 } catch (error) {
                     console.error('アップロードエラー:', error);
+                    updateGenerationStatus('アップロードエラー', 100);
                 }
             };
             reader.readAsDataURL(blob);
