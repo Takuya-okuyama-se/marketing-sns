@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学生時点での理想、小5編</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* キャラクター画像共通 */
+        .character-img {
+            width: 180px;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* スライド1: タイトル */
+        .slide-1 {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: white;
+        }
+
+        .main-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.3;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 32px;
+            opacity: 0.9;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .highlight-box {
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .highlight-text {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* スライド2: 現在地を知る重要性 */
+        .slide-2 {
+            background: #ffffff;
+        }
+
+        .section-header {
+            font-size: 52px;
+            font-weight: 700;
+            color: #3a7bd5;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 5px;
+            background: #00d2ff;
+            border-radius: 3px;
+        }
+
+        .position-visual {
+            background: #f8f9fa;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 900px;
+        }
+
+        .position-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            color: #2c3e50;
+        }
+
+        .position-icon {
+            font-size: 48px;
+            margin-right: 25px;
+        }
+
+        .emphasis-text {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        /* スライド3: 視野の広さ */
+        .slide-3 {
+            background: linear-gradient(135deg, #4776e6 0%, #8e54e9 100%);
+            color: white;
+        }
+
+        .perspective-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 900px;
+        }
+
+        .comparison-box {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .comparison-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .school-test {
+            border-color: #f39c12;
+        }
+
+        .juku-test {
+            border-color: #27ae60;
+        }
+
+        .comparison-content {
+            font-size: 28px;
+            line-height: 1.5;
+        }
+
+        .world-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        /* スライド4: 挑戦の大切さ */
+        .slide-4 {
+            background: #ffffff;
+        }
+
+        .challenge-container {
+            max-width: 900px;
+        }
+
+        .challenge-point {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 25px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .point-header {
+            font-size: 40px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .point-icon {
+            font-size: 48px;
+        }
+
+        .point-content {
+            font-size: 28px;
+            color: #2d3436;
+            line-height: 1.5;
+        }
+
+        .warning-box {
+            background: #ffe0e0;
+            border: 3px solid #e74c3c;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .warning-text {
+            font-size: 28px;
+            color: #e74c3c;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* スライド5: まとめ・行動喚起 */
+        .slide-5 {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+        }
+
+        .action-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .summary-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 50px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+            max-width: 850px;
+        }
+
+        .key-message {
+            font-size: 36px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .cta-button {
+            background: #fdcb6e;
+            color: #2d3436;
+            padding: 25px 60px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(253, 203, 110, 0.3);
+            animation: glow 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(253, 203, 110, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(253, 203, 110, 0.5); }
+        }
+
+        /* 保存推奨 */
+        .save-recommendation {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            animation: gentle-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
+        }
+
+        .save-icon {
+            font-size: 24px;
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* ナビゲーション */
+        .nav-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #00d2ff;
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active">
+            <img src="images/5.png" class="character-img" style="position: absolute; top: 60px; right: 60px;" alt="先生キャラクター">
+            <h1 class="main-title">
+                小学生時点での理想<br>
+                【小5編】
+            </h1>
+            <p class="subtitle">
+                現在地を知っている
+            </p>
+            <div class="highlight-box">
+                <p class="highlight-text">
+                    自分の位置を俯瞰的に見る力
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: 現在地を知る重要性 -->
+        <div class="slide slide-2">
+            <h2 class="section-header">なぜ現在地を知ることが大切？</h2>
+            <div class="position-visual">
+                <div class="position-item">
+                    <span class="position-icon">📊</span>
+                    <span>全体での<span class="emphasis-text">自分の位置</span>を把握</span>
+                </div>
+                <div class="position-item">
+                    <span class="position-icon">🎯</span>
+                    <span><span class="emphasis-text">おごらず</span>に客観視できる</span>
+                </div>
+                <div class="position-item">
+                    <span class="position-icon">🔍</span>
+                    <span><span class="emphasis-text">俯瞰的</span>な視点が身につく</span>
+                </div>
+            </div>
+            <img src="images/4.png" class="character-img" style="position: absolute; bottom: 50px; right: 50px; width: 200px;" alt="分析キャラクター">
+        </div>
+
+        <!-- スライド3: 視野の広さ -->
+        <div class="slide slide-3">
+            <h2 class="perspective-header">世界の広さを知る経験</h2>
+            <div class="comparison-container">
+                <div class="comparison-box school-test">
+                    <div class="world-icon">🏫</div>
+                    <h3 class="comparison-title">学校のテスト</h3>
+                    <p class="comparison-content">
+                        狭い範囲<br>
+                        基礎的な内容
+                    </p>
+                </div>
+                <div class="comparison-box juku-test">
+                    <div class="world-icon">🌍</div>
+                    <h3 class="comparison-title">塾の模試</h3>
+                    <p class="comparison-content">
+                        広い視野<br>
+                        応用的な内容
+                    </p>
+                </div>
+            </div>
+            <p style="font-size: 32px; margin-top: 40px; text-align: center;">
+                広い視点で見る癖をつけよう！
+            </p>
+        </div>
+
+        <!-- スライド4: 挑戦の大切さ -->
+        <div class="slide slide-4">
+            <h2 class="section-header">挑戦する気持ちを大切に</h2>
+            <div class="challenge-container">
+                <div class="challenge-point">
+                    <div class="point-header">
+                        <span class="point-icon">💪</span>
+                        <span>難易度の違いを体験</span>
+                    </div>
+                    <p class="point-content">
+                        塾の模試は学校とは全然違う！<br>
+                        その差を知ることが成長への第一歩
+                    </p>
+                </div>
+                <div class="warning-box">
+                    <p class="warning-text">
+                        ⚠️ 簡単な問題で満足しない<br>
+                        できた気にならずに挑戦！
+                    </p>
+                </div>
+            </div>
+            <img src="images/3.png" class="character-img" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 150px;" alt="応援キャラクター">
+        </div>
+
+        <!-- スライド5: まとめ -->
+        <div class="slide slide-5">
+            <img src="images/1.png" class="character-img" style="position: absolute; top: 50px; left: 50%; transform: translateX(-50%); width: 220px;" alt="まとめ先生">
+            <h2 class="action-header">小5から始める成長習慣</h2>
+            <div class="summary-box">
+                <p class="key-message">
+                    カラーテストだけでなく<br>
+                    模試を有効活用して<br>
+                    <br>
+                    広い世界を知る経験が<br>
+                    今後の成長に生きてくる！
+                </p>
+                <div class="cta-button">
+                    今すぐ模試に挑戦！
+                </div>
+            </div>
+            <div class="save-recommendation">
+                <span class="save-icon">📑</span>
+                <span>保存して何度でも確認</span>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            currentSlide = index;
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 4000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                stopAutoPlay();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                stopAutoPlay();
+                previousSlide();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'reset') {
+                stopAutoPlay();
+                showSlide(0);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                stopAutoPlay();
+                showSlide(event.data.slideIndex);
+            }
+        });
+
+        // URLパラメータで自動再生
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('autoplay') === 'true') {
+            startAutoPlay();
+        }
+
+        // 初期表示
+        showSlide(0);
+    </script>
+</body>
+</html>
