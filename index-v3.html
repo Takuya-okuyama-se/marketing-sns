@@ -1289,6 +1289,7 @@
             mediaRecorder.onstop = async () => {
                 const blob = new Blob(chunks, { type: 'video/webm' });
                 generatedVideoBlob = blob;
+                const currentVideoType = videoType;  // クロージャで値を保持
                 
                 // Data URLも生成（プレビュー用）
                 const reader = new FileReader();
@@ -1305,7 +1306,7 @@
                     // Google Driveに自動アップロード
                     updateGenerationStatus('Google Driveにアップロード中...', 95);
                     try {
-                        await uploadToGoogleDrive(blob, videoSelect.value);
+                        await uploadToGoogleDrive(blob, currentVideoType);
                     } catch (error) {
                         console.error('アップロードエラー:', error);
                         alert('Google Driveへの自動アップロードに失敗しました。手動でアップロードしてください。');
