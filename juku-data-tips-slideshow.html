@@ -758,8 +758,8 @@
                 progressBar.classList.add('autoplay');
             }
             
-            // 各スライドの表示時間（合計20秒）
-            const slideDurations = [4000, 4000, 4000, 4000, 4000];
+            // 各スライドの表示時間（合計30秒）
+            const slideDurations = [6000, 6000, 6000, 6000, 6000];
             let totalTime = 0;
             
             slideDurations.forEach((duration, index) => {
@@ -780,10 +780,10 @@
                 totalTime += duration;
             });
             
-            // 20秒後に最初に戻る
+            // 30秒後に最初に戻る
             autoPlayInterval = setInterval(() => {
                 startAutoPlay();
-            }, 20000);
+            }, 30000);
         }
         
         function stopAutoPlay() {
