@@ -1266,18 +1266,22 @@
         }
         
         async function generateVideoFromSlideshow(videoType) {
-            // Canvas要素を作成
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080;
-            canvas.height = 1080;
-            const ctx = canvas.getContext('2d');
+            // 実際のスライドショーをiframeでキャプチャする方法を試す
+            const useSimpleCanvas = true; // 一旦シンプルな方法を使用
             
-            // MediaRecorderの設定
-            const stream = canvas.captureStream(30);
-            const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm;codecs=vp9',
-                videoBitsPerSecond: 2000000
-            });
+            if (useSimpleCanvas) {
+                // Canvas要素を作成
+                const canvas = document.createElement('canvas');
+                canvas.width = 1080;
+                canvas.height = 1080;
+                const ctx = canvas.getContext('2d');
+                
+                // MediaRecorderの設定
+                const stream = canvas.captureStream(30);
+                const mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm;codecs=vp9',
+                    videoBitsPerSecond: 2000000
+                });
             
             const chunks = [];
             mediaRecorder.ondataavailable = (event) => {
@@ -1320,14 +1324,24 @@
             
             // スライドを描画（簡易版）
             const slides = getSlideData(videoType);
+            let totalDuration = 0;
+            const slideDuration = 4000; // 各スライド4秒
+            const totalTime = slides.length * slideDuration; // 5スライド × 4秒 = 20秒
+            
+            // 録画ループ
             for (let i = 0; i < slides.length; i++) {
                 await drawSlide(ctx, slides[i], i + 1, slides.length);
-                await sleep(4000); // 各スライド4秒
-                updateGenerationStatus(`スライド ${i + 1}/${slides.length} を処理中...`, ((i + 1) / slides.length) * 100);
+                await sleep(slideDuration);
+                totalDuration += slideDuration;
+                const progress = (totalDuration / totalTime) * 100;
+                updateGenerationStatus(`スライド ${i + 1}/${slides.length} を処理中...`, Math.min(progress * 0.9, 90));
             }
             
             // 録画停止
-            mediaRecorder.stop();
+            setTimeout(() => {
+                mediaRecorder.stop();
+            }, 100); // 少し遅延を入れて最後のフレームを確実にキャプチャ
+            }
         }
         
         function getSlideData(videoType) {
@@ -1355,20 +1369,51 @@
             ctx.fillStyle = slide.bg;
             ctx.fillRect(0, 0, 1080, 1080);
             
-            // タイトル
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 80px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(slide.title, 540, 400);
-            
-            // サブタイトル
-            ctx.font = '40px sans-serif';
-            ctx.fillText(slide.subtitle, 540, 500);
+            // より詳細なデザイン
+            if (slideNumber === 1) {
+                // タイトルスライド
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 72px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(slide.title, 540, 400);
+                
+                ctx.font = '36px sans-serif';
+                ctx.fillText(slide.subtitle, 540, 500);
+                
+                // 警告ボックス
+                if (videoType === 'juku-data-tips') {
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(140, 600, 800, 120);
+                    ctx.font = '28px sans-serif';
+                    ctx.fillText('⚠️ 小学校のカラーテストで', 540, 650);
+                    ctx.fillText('判断するのは危険！', 540, 690);
+                }
+            } else {
+                // 通常のスライド
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 56px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(slide.title, 540, 300);
+                
+                ctx.font = '32px sans-serif';
+                ctx.fillText(slide.subtitle, 540, 400);
+                
+                // コンテンツエリア
+                if (slide.content) {
+                    ctx.font = '28px sans-serif';
+                    const lines = slide.content.split('\n');
+                    lines.forEach((line, index) => {
+                        ctx.fillText(line, 540, 500 + (index * 40));
+                    });
+                }
+            }
             
             // スライド番号
-            ctx.font = '30px sans-serif';
-            ctx.fillText(`${slideNumber} / ${totalSlides}`, 540, 950);
+            ctx.font = '24px sans-serif';
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fillText(`${slideNumber} / ${totalSlides}`, 540, 1030);
         }
         
         function updateGenerationStatus(text, progress) {
