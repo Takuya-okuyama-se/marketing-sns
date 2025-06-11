@@ -177,14 +177,15 @@
                     };
                 });
 
-                // 画面共有を開始
+                // 画面共有を開始（preferCurrentTabを追加）
                 const stream = await navigator.mediaDevices.getDisplayMedia({
                     video: {
                         width: { ideal: 1080 },
                         height: { ideal: 1080 },
                         frameRate: { ideal: 30 }
                     },
-                    audio: false
+                    audio: false,
+                    preferCurrentTab: true  // 現在のタブを優先表示
                 });
 
                 // MediaRecorderの設定
