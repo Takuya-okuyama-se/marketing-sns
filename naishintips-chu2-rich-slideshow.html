@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内申点に関しての考え方、中2編</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: black;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(0,0,0,0.8);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* 背景画像のズームアニメーション */
+        @keyframes bgZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .slide.active {
+            animation: bgZoom 30s ease-out forwards;
+        }
+
+        /* 背景オーバーレイ */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* パーティクルエフェクト */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(241, 196, 15, 0.8);
+            border-radius: 50%;
+            animation: float-up 10s linear infinite;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* コンテンツは前面に */
+        .slide > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* タイトルアニメーション */
+        .main-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.3;
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+            opacity: 0;
+            animation: titleSlideIn 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes titleSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subtitle {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.4;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ハイライトボックスのアニメーション */
+        .highlight-box {
+            background: rgba(255,255,255,0.95);
+            border: 3px solid #f39c12;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 30px;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: popIn 0.8s ease-out 1.5s forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .highlight-text {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            color: #2c3e50;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { 
+                text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(241, 196, 15, 0.8), 0 0 30px rgba(241, 196, 15, 0.6);
+            }
+        }
+
+        /* セクションヘッダーアニメーション */
+        .section-header {
+            font-size: 52px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+            opacity: 0;
+            animation: slideInFromLeft 1s ease-out 0.3s forwards;
+        }
+
+        @keyframes slideInFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* カードバランスアニメーション */
+        .subject-balance {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 900px;
+        }
+
+        .subject-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: cardFlip 0.8s ease-out forwards;
+        }
+
+        .subject-card:nth-child(1) { animation-delay: 0.8s; }
+        .subject-card:nth-child(2) { animation-delay: 1.1s; }
+
+        @keyframes cardFlip {
+            0% {
+                opacity: 0;
+                transform: rotateY(90deg) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: rotateY(0) scale(1);
+            }
+        }
+
+        .subject-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .good-subject {
+            border: 3px solid #27ae60;
+        }
+
+        .weak-subject {
+            border: 3px solid #e74c3c;
+        }
+
+        .subject-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* メンタルボックスアニメーション */
+        .mental-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 850px;
+            opacity: 0;
+            animation: boxReveal 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes boxReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .mental-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            color: white;
+            text-shadow: 4px 4px 10px rgba(0,0,0,0.8);
+            opacity: 0;
+            animation: titleSlideIn 1s ease-out 0.3s forwards;
+        }
+
+        .pillar-emphasis {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            font-size: 32px;
+            font-weight: 700;
+            opacity: 0;
+            animation: emphasisPulse 1s ease-out 1.5s forwards;
+            box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4);
+        }
+
+        @keyframes emphasisPulse {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 戦略フローアニメーション */
+        .strategy-flow {
+            max-width: 900px;
+        }
+
+        .flow-item {
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            opacity: 0;
+            animation: slideInFromRight 0.8s ease-out forwards;
+        }
+
+        .flow-item:nth-child(1) { animation-delay: 0.5s; }
+        .flow-item:nth-child(2) { animation-delay: 0.8s; }
+        .flow-item:nth-child(3) { animation-delay: 1.1s; }
+
+        @keyframes slideInFromRight {
+            0% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .flow-number {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 800;
+            flex-shrink: 0;
+            animation: numberRotate 2s ease-in-out infinite;
+        }
+
+        @keyframes numberRotate {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(360deg); }
+        }
+
+        /* CTAボタンアニメーション */
+        .cta-button {
+            background: #f39c12;
+            color: white;
+            padding: 25px 60px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.3);
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: ctaAppear 1s ease-out 1.5s forwards;
+            opacity: 0;
+        }
+
+        @keyframes ctaAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* キャラクター画像アニメーション */
+        .character-img {
+            width: 180px;
+            height: auto;
+            z-index: 10;
+            opacity: 0;
+            animation: characterAppear 1s ease-out 0.8s forwards;
+        }
+
+        @keyframes characterAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        /* グラデーション背景アニメーション */
+        .gradient-bg {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: linear-gradient(45deg, #f39c12, #e67e22, #d35400, #f1c40f);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 保存推奨の強調アニメーション */
+        .save-recommendation {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 3px solid #f39c12;
+            border-radius: 50px;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #2c3e50;
+            animation: saveButtonPulse 2s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+            z-index: 3;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        @keyframes saveButtonPulse {
+            0%, 100% { 
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+            }
+            50% { 
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 15px 40px rgba(243, 156, 18, 0.6);
+            }
+        }
+
+        .save-recommendation:hover {
+            transform: translateX(-50%) scale(1.1);
+            background: #f39c12;
+            color: white;
+        }
+
+        /* フローティングエレメント */
+        .floating-element {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(5deg); }
+            66% { transform: translateY(10px) rotate(-5deg); }
+        }
+
+        .float-1 {
+            top: 10%;
+            left: 10%;
+            font-size: 40px;
+            animation-delay: 0s;
+        }
+
+        .float-2 {
+            top: 20%;
+            right: 15%;
+            font-size: 35px;
+            animation-delay: 2s;
+        }
+
+        .float-3 {
+            bottom: 30%;
+            left: 15%;
+            font-size: 45px;
+            animation-delay: 4s;
+        }
+
+        /* プログレスバーアニメーション */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #f39c12, #e67e22);
+            width: 0;
+            transition: width 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+
+        /* ナビゲーションボタンの改良 */
+        .nav-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.9);
+            color: #2c3e50;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover {
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* インジケーターの改良 */
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #f39c12;
+            transform: scale(1.5);
+            box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+
+        /* 講師写真 */
+        .teacher-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: photoZoomIn 1s ease-out 0.5s forwards;
+        }
+
+        @keyframes photoZoomIn {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- パーティクルエフェクト -->
+        <div class="particles" id="particles"></div>
+
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active" style="background-image: url('images/26160617.png');">
+            <div class="gradient-bg"></div>
+            <div class="floating-element float-1">📚</div>
+            <div class="floating-element float-2">✨</div>
+            <img src="images/8.png" class="character-img" style="position: absolute; top: 60px; right: 60px;" alt="先生キャラクター">
+            <h1 class="main-title">
+                内申点に関しての<br>
+                考え方【中2編】
+            </h1>
+            <p class="subtitle">
+                学年によって内申点の取り方で<br>
+                意識する部分が異なります！
+            </p>
+            <div class="highlight-box">
+                <p class="highlight-text">
+                    大切なのは、耐える意識！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: 得意科目と苦手科目 -->
+        <div class="slide slide-2" style="background-image: url('images/26160617.png');">
+            <div class="floating-element float-3">💡</div>
+            <h2 class="section-header">得意科目の有無と苦手科目の把握</h2>
+            <div class="subject-balance">
+                <div class="subject-card good-subject">
+                    <div class="subject-icon">💪</div>
+                    <h3 class="subject-title" style="color: #27ae60;">得意科目</h3>
+                    <p class="subject-desc" style="font-size: 24px; color: #5d6d7e; line-height: 1.5;">
+                        勉強を続ける<br>
+                        心の柱になる
+                    </p>
+                </div>
+                <div class="subject-card weak-subject">
+                    <div class="subject-icon">🛡️</div>
+                    <h3 class="subject-title" style="color: #e74c3c;">苦手科目</h3>
+                    <p class="subject-desc" style="font-size: 24px; color: #5d6d7e; line-height: 1.5;">
+                        しっかり把握して<br>
+                        耐えていく
+                    </p>
+                </div>
+            </div>
+            <img src="images/15.png" class="character-img" style="position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 150px;" alt="バランスキャラクター">
+        </div>
+
+        <!-- スライド3: 精神的な不安定期 -->
+        <div class="slide slide-3" style="background-image: url('images/26160617.png');">
+            <h2 class="mental-header">中2は精神的に不安定な時期</h2>
+            <div class="mental-box">
+                <p style="font-size: 36px; line-height: 1.6; margin-bottom: 30px; color: #2c3e50;">
+                    勉強へのモチベーション維持が<br>
+                    最も難しい学年
+                </p>
+                <div class="pillar-emphasis">
+                    <p>だからこそ<br>
+                    「軸となる科目」が必要！</p>
+                </div>
+                <p style="font-size: 28px; margin-top: 30px; color: #5d6d7e;">
+                    得意科目が精神的な支えになる
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド4: 戦略 -->
+        <div class="slide slide-4" style="background-image: url('images/26160617.png');">
+            <h2 class="section-header">中2の内申点戦略</h2>
+            <div class="strategy-flow">
+                <div class="flow-item">
+                    <div class="flow-number">1</div>
+                    <div class="flow-content">
+                        <h3 style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;">軸となる得意科目をつくる</h3>
+                        <p style="font-size: 24px; color: #5d6d7e; line-height: 1.4;">モチベーションの源泉に</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">2</div>
+                    <div class="flow-content">
+                        <h3 style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;">苦手科目は「耐える」</h3>
+                        <p style="font-size: 24px; color: #5d6d7e; line-height: 1.4;">完璧を求めず、最低限をキープ</p>
+                    </div>
+                </div>
+                <div class="flow-item">
+                    <div class="flow-number">3</div>
+                    <div class="flow-content">
+                        <h3 style="font-size: 32px; font-weight: 700; color: #2c3e50; margin-bottom: 10px;">バランスを保ちながら進む</h3>
+                        <p style="font-size: 24px; color: #5d6d7e; line-height: 1.4;">無理せず継続することが大切</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: まとめ -->
+        <div class="slide slide-5" style="background-image: url('images/26160617.png');">
+            <img src="images/IMG_0355.png" class="teacher-photo" alt="講師">
+            <img src="images/6.png" class="character-img" style="position: absolute; top: 50px; right: 50px; width: 180px;" alt="まとめ先生">
+            <h2 style="font-size: 56px; font-weight: 800; margin-bottom: 40px; text-align: center; color: white; text-shadow: 3px 3px 10px rgba(0,0,0,0.8);">中2を乗り切る秘訣</h2>
+            <div style="background: rgba(255,255,255,0.95); border-radius: 30px; padding: 50px; max-width: 850px;">
+                <p style="font-size: 36px; line-height: 1.6; margin-bottom: 30px; text-align: center; color: #2c3e50;">
+                    得意科目を心の柱に<br>
+                    苦手科目は耐えながら<br>
+                    <br>
+                    不安定な時期だからこそ<br>
+                    バランスを大切に進もう！
+                </p>
+                <div class="cta-button">
+                    今日から実践！
+                </div>
+            </div>
+            <div class="save-recommendation">
+                <span class="save-icon">📑</span>
+                <span>保存して何度でも確認</span>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators" style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 100;">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        // パーティクル生成
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        function showSlide(index) {
+            // 現在のスライドをフェードアウト
+            if (slides[currentSlide]) {
+                slides[currentSlide].classList.add('fade-out');
+            }
+
+            setTimeout(() => {
+                slides.forEach((slide, i) => {
+                    slide.classList.remove('active', 'fade-out', 'fade-in');
+                    if (i === index) {
+                        slide.classList.add('active', 'fade-in');
+                        // スライドごとにアニメーションをリセット
+                        resetAnimations(slide);
+                    }
+                });
+                
+                indicators.forEach((indicator, i) => {
+                    indicator.classList.toggle('active', i === index);
+                });
+                
+                currentSlide = index;
+                updateProgressBar();
+            }, 300);
+        }
+
+        function resetAnimations(slide) {
+            // アニメーションをリセットするために要素を再生成
+            const elements = slide.querySelectorAll('[class*="animation"]');
+            elements.forEach(el => {
+                const animation = el.style.animation;
+                el.style.animation = 'none';
+                el.offsetHeight; // リフローを強制
+                el.style.animation = animation;
+            });
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 6000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                stopAutoPlay();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                stopAutoPlay();
+                previousSlide();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'reset') {
+                stopAutoPlay();
+                showSlide(0);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                stopAutoPlay();
+                showSlide(event.data.slideIndex);
+            }
+        });
+
+        // 初期化
+        createParticles();
+        showSlide(0);
+
+        // URLパラメータで自動再生
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('autoplay') === 'true') {
+            startAutoPlay();
+        }
+    </script>
+</body>
+</html>
