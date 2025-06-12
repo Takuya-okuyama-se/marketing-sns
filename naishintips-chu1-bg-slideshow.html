@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内申点に関しての考え方、中1編</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .video-container {
+            width: 1080px;
+            height: 1080px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* スライド共通スタイル */
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* 背景オーバーレイ */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* コンテンツは前面に */
+        .slide > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* テキストスタイル */
+        .main-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.3;
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+        }
+
+        .subtitle {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.4;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .highlight-box {
+            background: rgba(255,255,255,0.95);
+            border: 3px solid #e74c3c;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .highlight-text {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .section-header {
+            font-size: 52px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+        }
+
+        .content-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 900px;
+        }
+
+        .importance-text {
+            font-size: 36px;
+            color: #2c3e50;
+            font-weight: 700;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .warning-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(5px); }
+        }
+
+        .impact-list {
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 850px;
+        }
+
+        .impact-item {
+            font-size: 32px;
+            margin-bottom: 25px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+
+        .impact-item::before {
+            content: '⚠️';
+            font-size: 36px;
+            margin-right: 20px;
+        }
+
+        .learning-points {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 1000px;
+        }
+
+        .point-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .point-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .point-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .point-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .point-desc {
+            font-size: 20px;
+            color: #5d6d7e;
+            line-height: 1.4;
+        }
+
+        .action-header {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-align: center;
+            color: white;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+        }
+
+        .summary-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 850px;
+        }
+
+        .key-message {
+            font-size: 36px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .cta-button {
+            background: #e74c3c;
+            color: white;
+            padding: 25px 60px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+            animation: glow 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5); }
+        }
+
+        /* 講師写真 */
+        .teacher-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        /* 保存推奨 */
+        .save-recommendation {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            border: 2px solid #3498db;
+            border-radius: 50px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            animation: gentle-pulse 3s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
+        }
+
+        .save-icon {
+            font-size: 24px;
+        }
+
+        /* プログレスバー */
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            width: 0;
+            transition: width 0.3s ease;
+            z-index: 10;
+        }
+
+        /* ナビゲーション */
+        .nav-buttons {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.9);
+            color: #2c3e50;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .slide-indicators {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            background: #e74c3c;
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- スライド1: タイトル -->
+        <div class="slide slide-1 active" style="background-image: url('images/2438464.jpg');">
+            <h1 class="main-title">
+                内申点に関しての<br>
+                考え方【中1編】
+            </h1>
+            <p class="subtitle">
+                学年によって内申点の取り方で<br>
+                意識する部分が異なります！
+            </p>
+            <div class="highlight-box">
+                <p class="highlight-text">
+                    中1で最も大切なのは英語！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド2: 重要性の説明 -->
+        <div class="slide slide-2" style="background-image: url('images/2438464.jpg');">
+            <h2 class="section-header">なぜ中1の英語が重要なのか？</h2>
+            <div class="content-box">
+                <div class="warning-icon">⚡</div>
+                <p class="importance-text">
+                    英語でつまずくと<br>
+                    中2・中3に大きな影響！
+                </p>
+            </div>
+        </div>
+
+        <!-- スライド3: 英語の重要性詳細 -->
+        <div class="slide slide-3" style="background-image: url('images/2438464.jpg');">
+            <h2 class="section-header">英語は積み重ねの科目</h2>
+            <div class="impact-list">
+                <div class="impact-item">
+                    主語の把握が必要
+                </div>
+                <div class="impact-item">
+                    動詞の区別が重要
+                </div>
+                <div class="impact-item">
+                    文型の区別など判断が多い
+                </div>
+                <div class="impact-item">
+                    スピードと正確性が必須
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド4: 具体的な学習ポイント -->
+        <div class="slide slide-4" style="background-image: url('images/2438464.jpg');">
+            <h2 class="section-header">英語学習の重要ポイント</h2>
+            <div class="learning-points">
+                <div class="point-card">
+                    <div class="point-icon">⏱️</div>
+                    <div class="point-title">時間がかかる</div>
+                    <div class="point-desc">
+                        習得には継続的な<br>学習時間が必要
+                    </div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">📊</div>
+                    <div class="point-title">判断力</div>
+                    <div class="point-desc">
+                        文法の正確な<br>判断力を養成
+                    </div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">🎯</div>
+                    <div class="point-title">スピード</div>
+                    <div class="point-desc">
+                        素早く正確に<br>解答する力
+                    </div>
+                </div>
+                <div class="point-card">
+                    <div class="point-icon">🔥</div>
+                    <div class="point-title">神奈川県は難易度高</div>
+                    <div class="point-desc">
+                        県内入試の<br>英語は特に難しい
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- スライド5: まとめ -->
+        <div class="slide slide-5" style="background-image: url('images/2438464.jpg');">
+            <img src="images/IMG_0354.png" class="teacher-photo" alt="講師">
+            <h2 class="action-header">今すぐ始めよう！</h2>
+            <div class="summary-box">
+                <p class="key-message">
+                    中1の英語内申点は<br>
+                    3年間の土台となる！<br>
+                    <br>
+                    今から確実に<br>
+                    基礎を固めていこう
+                </p>
+                <div class="cta-button">
+                    英語を得意科目に！
+                </div>
+            </div>
+            <div class="save-recommendation">
+                <span class="save-icon">📑</span>
+                <span>保存して何度でも確認</span>
+            </div>
+        </div>
+
+        <!-- プログレスバー -->
+        <div class="progress" id="progressBar"></div>
+
+        <!-- ナビゲーションボタン -->
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="previousSlide()">◀ 前へ</button>
+            <button class="nav-btn" onclick="startAutoPlay()">▶ 自動再生</button>
+            <button class="nav-btn" onclick="nextSlide()">次へ ▶</button>
+        </div>
+
+        <!-- スライドインジケーター -->
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="showSlide(0)"></div>
+            <div class="indicator" onclick="showSlide(1)"></div>
+            <div class="indicator" onclick="showSlide(2)"></div>
+            <div class="indicator" onclick="showSlide(3)"></div>
+            <div class="indicator" onclick="showSlide(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let autoPlayInterval = null;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+            });
+            
+            currentSlide = index;
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function startAutoPlay() {
+            stopAutoPlay();
+            autoPlayInterval = setInterval(nextSlide, 6000);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+            }
+        }
+
+        // キーボード操作
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                stopAutoPlay();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                stopAutoPlay();
+                previousSlide();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                startAutoPlay();
+            }
+        });
+
+        // 親ウィンドウからのメッセージ受信
+        window.addEventListener('message', (event) => {
+            if (event.data.action === 'startAutoPlay') {
+                startAutoPlay();
+            } else if (event.data.action === 'stopAutoPlay') {
+                stopAutoPlay();
+            } else if (event.data.action === 'reset') {
+                stopAutoPlay();
+                showSlide(0);
+            } else if (event.data.action === 'showSlide' && event.data.slideIndex !== undefined) {
+                stopAutoPlay();
+                showSlide(event.data.slideIndex);
+            }
+        });
+
+        // URLパラメータで自動再生
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('autoplay') === 'true') {
+            startAutoPlay();
+        }
+
+        // 初期表示
+        showSlide(0);
+    </script>
+</body>
+</html>
