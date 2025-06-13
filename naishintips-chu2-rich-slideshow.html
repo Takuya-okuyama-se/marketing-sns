@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif;
-            background: #000;
+            background: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -384,12 +384,12 @@
             font-size: 36px;
             font-weight: 800;
             flex-shrink: 0;
-            animation: numberRotate 2s ease-in-out infinite;
+            animation: numberPulse 2s ease-in-out infinite;
         }
 
         @keyframes numberRotate {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(360deg); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         /* CTAボタンアニメーション */
@@ -649,7 +649,6 @@
         <!-- スライド1: タイトル -->
         <div class="slide slide-1 active" style="background-image: url('images/26160617.png');">
             <div class="gradient-bg"></div>
-            <div class="floating-element float-1">📚</div>
             <div class="floating-element float-2">✨</div>
             <img src="images/8.png" class="character-img" style="position: absolute; top: 60px; right: 60px;" alt="先生キャラクター">
             <h1 class="main-title">
@@ -755,7 +754,7 @@
                     今日から実践！
                 </div>
             </div>
-            <div class="save-recommendation">
+            <div class="save-recommendation" style="bottom: 50px;">
                 <span class="save-icon">📑</span>
                 <span>保存して何度でも確認</span>
             </div>
