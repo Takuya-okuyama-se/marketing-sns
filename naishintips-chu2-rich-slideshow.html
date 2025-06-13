@@ -71,17 +71,6 @@
             z-index: 1;
         }
         
-        /* 白い下地 */
-        .slide::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 0;
-        }
 
         /* パーティクルエフェクト */
         .particles {
@@ -754,7 +743,7 @@
             <img src="images/IMG_0355.png" class="teacher-photo" alt="講師">
             <img src="images/6.png" class="character-img" style="position: absolute; top: 50px; right: 50px; width: 180px;" alt="まとめ先生">
             <h2 style="font-size: 56px; font-weight: 800; margin-bottom: 40px; text-align: center; color: white; text-shadow: 3px 3px 10px rgba(0,0,0,0.8);">中2を乗り切る秘訣</h2>
-            <div style="background: rgba(255,255,255,0.95); border-radius: 30px; padding: 50px; max-width: 850px;">
+            <div style="background: rgba(255,255,255,0.95); border-radius: 30px; padding: 50px; max-width: 850px; display: flex; flex-direction: column; align-items: center;">
                 <p style="font-size: 36px; line-height: 1.6; margin-bottom: 30px; text-align: center; color: #2c3e50;">
                     得意科目を心の柱に<br>
                     苦手科目は耐えながら<br>
@@ -762,7 +751,7 @@
                     不安定な時期だからこそ<br>
                     バランスを大切に進もう！
                 </p>
-                <div class="cta-button" style="margin: 30px auto 0 auto; text-align: center;">
+                <div class="cta-button" style="margin: 30px auto 0 auto; text-align: center; display: inline-block;">
                     今日から実践！
                 </div>
             </div>
