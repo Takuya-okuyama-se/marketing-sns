@@ -612,7 +612,6 @@
         <!-- スライド1: タイトル -->
         <div class="slide slide-1 active" style="background-image: url('images/2438464.jpg');">
             <div class="gradient-bg"></div>
-            <div class="floating-element float-1" style="top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; animation-delay: 0s;">⚡</div>
             <h1 class="main-title">
                 内申点に関しての<br>
                 考え方【中1編】
@@ -630,6 +629,7 @@
 
         <!-- スライド2: 重要性の説明 -->
         <div class="slide slide-2" style="background-image: url('images/2438464.jpg');">
+            <div class="floating-element" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 2;">⚡</div>
             <h2 class="section-header">なぜ中1の英語が重要なのか？</h2>
             <div class="content-box">
                 <div class="warning-icon">⚡</div>
@@ -696,11 +696,9 @@
 
         <!-- スライド5: まとめ -->
         <div class="slide slide-5" style="background-image: url('images/2438464.jpg');">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <img src="images/IMG_0354.png" class="teacher-photo" alt="講師">
-                <h2 class="action-header">今すぐ始めよう！</h2>
-            </div>
-            <div class="summary-box">
+            <img src="images/IMG_0354.png" class="teacher-photo" alt="講師">
+            <h2 class="action-header" style="margin-bottom: 30px;">今すぐ始めよう！</h2>
+            <div class="summary-box" style="display: flex; flex-direction: column; align-items: center;">
                 <p class="key-message">
                     中1の英語内申点は<br>
                     3年間の土台となる！<br>
@@ -708,7 +706,7 @@
                     今から確実に<br>
                     基礎を固めていこう
                 </p>
-                <div class="cta-button">
+                <div class="cta-button" style="margin: 30px auto 0 auto;">
                     英語を得意科目に！
                 </div>
             </div>
